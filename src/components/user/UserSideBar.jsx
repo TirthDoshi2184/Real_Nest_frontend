@@ -31,13 +31,19 @@ export const UserSideBar = () => {
         // logoImage:DashboardIcon
     },
     {
-        id:2,
+      id:2,
+      name:"Login",
+      linkUrl:"login",
+      // logoImage:ProfileIcon
+  },
+    {
+        id:3,
         name:"Profile",
         linkUrl:"profile",
         // logoImage:ProfileIcon
     },
     {
-        id:3,
+        id:4,
         name:"Settings",
         linkUrl:"settings",
         // logoImage:SettingsIcon
