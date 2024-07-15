@@ -62,7 +62,6 @@ export const UserSideBar = () => {
       }}
     >
       <Drawer
-        // variant={isMobile ? "temporary" : "permanent"}
         open={isExpanded}
         onClose={() => setIsExpanded(false)}
         PaperProps={{

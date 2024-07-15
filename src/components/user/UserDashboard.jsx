@@ -23,8 +23,7 @@ export const UserDashboard = () => {
             alignItems: "center",
           }}
         >
-
-            <Typography>hello</Typography>
+          <Typography>Hello</Typography>
         </Box>
       </Container>
     </ThemeProvider>
