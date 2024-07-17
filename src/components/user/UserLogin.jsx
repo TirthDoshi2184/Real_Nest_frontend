@@ -12,6 +12,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
 function Copyright(props) {
   return (
@@ -31,15 +34,35 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function UserLogin() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  const navigate = useNavigate()
+  const [user, setuser] = React.useState({})
+  const { register, handleSubmit} = useForm()
+  const submithandle = async (data) => {
 
+    var userObj = Object.assign({}, data)
+    setuser(data)
+    console.log("=====================>", data);
+    const userDetails = await axios.post("http://localhost:3000/user/login", userObj)
+    console.log("userdetIL",userDetails.data);
+    console.log("DATA..",userDetails.data.user);
+    console.log(data);
+    if (userDetails.status == 200) {
+        console.log(".........",userDetails.data.user.role);
+        switch (userDetails.data.user.role) {
+            case "Seller":
+                sessionStorage.setItem("id", userDetails?.data?.user?._id)
+                console.log("Data:---",data);
+                navigate("/sellerdashboard")
+                break;
+            case "Buyer":
+                sessionStorage.setItem("id", userDetails?.data.user?._id)
+                console.log("Data:---",data);
+                navigate("/buyerdashboard")
+                break;
+            default:
+        }
+      }
+    }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -58,7 +81,7 @@ export default function UserLogin() {
           <Typography component="h1" variant="h5">
             Login
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" noValidate onSubmit={handleSubmit(submithandle)} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -67,6 +90,7 @@ export default function UserLogin() {
                   id="email"
                   label="Email Address"
                   name="email"
+                  {...register("email")}
                   autoComplete="email"
                 />
               </Grid>
@@ -78,6 +102,7 @@ export default function UserLogin() {
                   label="Password"
                   type="password"
                   id="password"
+                  {...register("password")}
                   autoComplete="new-password"
                 />
               </Grid>

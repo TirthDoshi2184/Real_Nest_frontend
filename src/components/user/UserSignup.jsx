@@ -119,7 +119,7 @@ export default function UserSignup() {
                 />
               </Grid>
 
-              {/* <Grid item xs={120}>
+              <Grid item xs={120}>
               <InputLabel id="demo-simple-select-label">Role</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -131,11 +131,7 @@ export default function UserSignup() {
                 <MenuItem value={"Seller"}>Seller</MenuItem>
           
               </Select>
-            </Grid> */}
-
-
-
-
+            </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}

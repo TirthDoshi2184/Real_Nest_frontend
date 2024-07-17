@@ -47,6 +47,11 @@ export const UserSideBar = () => {
         name:"Settings",
         linkUrl:"settings",
         // logoImage:SettingsIcon
+    },
+    {
+      id:5,
+      name:"AddProperty",
+      linkUrl:"addproperty",
     }
   ]
   var constant = {
