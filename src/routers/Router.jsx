@@ -7,12 +7,18 @@ import UserSignup from "../components/user/UserSignup";
 import { SellerDashboard } from "../components/Dashboard/SellerDashboard";
 import { BuyerDashboard } from "../components/Dashboard/BuyerDashboard";
 import AddProperty from "../components/Property/AddProperty";
+import PropertyDetail from "../components/Property/PropertyDetail";
 
 const MainRouter = ({ children }) => {
   const routesData = createBrowserRouter([
     {
       path: "/",
       element: <UserSignup />,
+      errorElement: <h1>Login Error 404</h1>
+    },
+    {
+      path: "/pdetail",
+      element: <PropertyDetail />,
       errorElement: <h1>Login Error 404</h1>
     },
     {
