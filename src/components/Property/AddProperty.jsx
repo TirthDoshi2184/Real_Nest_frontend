@@ -1,144 +1,220 @@
+import React, { useState } from 'react';
 import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Grid,
-  Radio,
   TextField,
+  Select,
+  MenuItem,
+  Button,
+  Box,
   Typography,
-} from "@mui/material";
-// import { pink } from "@mui/material/colors";
-import React from "react";
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  Grid,
+  Paper,
+  InputLabel,
+} from '@mui/material';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
-export default function AddProperty() {
-//  Radio Button logic start 
-//   const [selectedValue, setSelectedValue] = React.useState('a');
+const AddProperty = () => {
+  const navigate = useNavigate();
 
-//   const handleChange = (event) => {
-//     setSelectedValue(event.target.value);
-//   };
-//   const controlProps = (item) => ({
-//     checked: selectedValue === item,
-//     onChange: handleChange,
-//     value: item,
-//     name: 'color-radio-button-demo',
-//     inputProps: { 'aria-label': item },
-//   });
-//  Radio Button logic end 
+  const [propertyData, setPropertyData] = useState({
+    type: '',
+    interiorType: '',
+    sqrft: '',
+    price: '',
+    status: '',
+    location: '',
+    review: '',
+    society: '',
+    image: null,
+  });
+
+  const typeOptions = ['2BHK', '3BHK', '4BHK'];
+  const interiorTypeOptions = ['Furnished', 'Non-Furnished'];
+  const statusOptions = ['Finished', 'Unfinished'];
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setPropertyData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setPropertyData((prevData) => ({ ...prevData, image: file }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('type', propertyData.type);
+    formData.append('interiorType', propertyData.interiorType);
+    formData.append('sqrft', propertyData.sqrft);
+    formData.append('price', propertyData.price);
+    formData.append('status', propertyData.status);
+    formData.append('location', propertyData.location);
+    formData.append('review', propertyData.review);
+    formData.append('society', propertyData.society);
+    if (propertyData.image) {
+      formData.append('makaanFile', propertyData.image);
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3000/flat/insertflat", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log("Property added successfully:", response.data);
+      navigate("/");
+    } catch (error) {
+      console.error("Error adding property:", error);
+    }
+  };
 
   return (
-    <React.Fragment>
-      <Typography variant="h5" gutterBottom>
-        Add Property
-      </Typography>
-      <Grid container spacing={3} justifyContent="center" alignItems="center">
-        <Grid item xs={10.5} sm={4.5}>
-          <TextField
-            required
-            id="Price"
-            name="Price"
-            label="Price"
-            fullWidth
-            autoComplete="given-name"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={10.5} sm={4.5}>
-          <TextField
-            required
-            id="sqrft"
-            name="sqrft"
-            label="Carpet Area"
-            fullWidth
-            autoComplete="family-name"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={9}>
-          <TextField
-            required
-            id="address1"
-            name="address1"
-            label="Address line 1"
-            fullWidth
-            autoComplete="shipping address-line1"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={9}>
-          <TextField
-            id="address2"
-            name="address2"
-            label="Address line 2"
-            fullWidth
-            autoComplete="shipping address-line2"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={10.5} sm={4.5}>
-          <TextField
-            required
-            id="city"
-            name="city"
-            label="City"
-            fullWidth
-            autoComplete="shipping address-level2"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={10.5} sm={4.5}>
-          <TextField
-            id="state"
-            name="state"
-            label="State/Province/Region"
-            variant="standard"
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={10.5} sm={4.5}>
-          <TextField
-            required
-            id="zip"
-            name="zip"
-            label="Zip / Postal code"
-            fullWidth
-            autoComplete="shipping postal-code"
-            variant="standard"
-          />
-        </Grid>
-        {/* <Grid item xs={10.5} sm={4.5}>
-          <Radio {...controlProps("a")} />2bhk
-          <Radio {...controlProps("b")} color="secondary" />3bhk
-          <Radio {...controlProps("c")} color="success" />4bhk
-        </Grid> */}
-        <Grid item xs={10.5} sm={4.5}>
-          <TextField
-            required
-            id="country"
-            name="country"
-            label="Country"
-            fullWidth
-            autoComplete="shipping country"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={
-              <Checkbox color="secondary" name="saveAddress" value="yes" />
-            }
-            label="Use this address for payment details"
-          />
-        </Grid>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          Register
-        </Button>
-      </Grid>
-    </React.Fragment>
+    <Box>
+      <Paper elevation={0} style={{ padding: '20px', marginBottom: 20, background: '#1976d2', color: '#ffffff' }}>
+        <Typography variant="h5" align="center" style={{ fontWeight: 'bold', letterSpacing: 1 }}>
+          Add Property Form
+        </Typography>
+      </Paper>
+      <Paper elevation={3} style={{ maxWidth: 800, margin: 'auto', padding: '20px', background: '#f5f5f5', borderRadius: 10, boxShadow: '0px 3px 15px rgba(0, 0, 0, 0.2)' }}>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <FormControl component="fieldset" fullWidth>
+                <FormLabel component="legend" style={{ marginBottom: 10 }}>Type of Flat</FormLabel>
+                <RadioGroup row aria-label="type" name="type" value={propertyData.type} onChange={handleChange}>
+                  {typeOptions.map((option) => (
+                    <FormControlLabel key={option} value={option} control={<Radio />} label={option} />
+                  ))}
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Interior Type</InputLabel>
+                <Select
+                  name="interiorType"
+                  value={propertyData.interiorType}
+                  onChange={handleChange}
+                  variant="outlined"
+                >
+                  <MenuItem value="">Select Interior Type</MenuItem>
+                  {interiorTypeOptions.map((option) => (
+                    <MenuItem key={option} value={option}>{option}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="sqrft"
+                label="Square Feet"
+                variant="outlined"
+                fullWidth
+                value={propertyData.sqrft}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="price"
+                label="Price"
+                variant="outlined"
+                fullWidth
+                value={propertyData.price}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  name="status"
+                  value={propertyData.status}
+                  onChange={handleChange}
+                  variant="outlined"
+                >
+                  <MenuItem value="">Select Status</MenuItem>
+                  {statusOptions.map((option) => (
+                    <MenuItem key={option} value={option}>{option}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="location"
+                label="Location"
+                variant="outlined"
+                fullWidth
+                value={propertyData.location}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="review"
+                label="Review"
+                variant="outlined"
+                fullWidth
+                value={propertyData.review}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="society"
+                label="Society"
+                variant="outlined"
+                fullWidth
+                value={propertyData.society}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <input
+                accept="image/*"
+                id="contained-button-file"
+                type="file"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+              <label htmlFor="contained-button-file">
+                <Button
+                  variant="contained"
+                  component="span"
+                  fullWidth
+                  style={{ marginTop: 20, background: '#4caf50', color: '#ffffff', '&:hover': { background: '#388e3c' } }}
+                  startIcon={<PhotoCamera />}
+                >
+                  Upload Image
+                </Button>
+              </label>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                style={{ marginTop: 20, background: '#f50057', color: '#ffffff', '&:hover': { background: '#c51162' } }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      </Paper>
+    </Box>
   );
-}
+};
+
+export default AddProperty;

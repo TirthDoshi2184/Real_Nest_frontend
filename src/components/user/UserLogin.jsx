@@ -52,12 +52,12 @@ export default function UserLogin() {
             case "Seller":
                 sessionStorage.setItem("id", userDetails?.data?.user?._id)
                 console.log("Data:---",data);
-                navigate("/sellerdashboard")
+                navigate("/user/sellerdashboard")
                 break;
             case "Buyer":
                 sessionStorage.setItem("id", userDetails?.data.user?._id)
                 console.log("Data:---",data);
-                navigate("/buyerdashboard")
+                navigate("/user/buyerdashboard")
                 break;
             default:
         }
