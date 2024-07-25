@@ -8,6 +8,7 @@ import { SellerDashboard } from "../components/Dashboard/SellerDashboard";
 import { BuyerDashboard } from "../components/Dashboard/BuyerDashboard";
 import AddProperty from "../components/Property/AddProperty";
 import  ListProperty  from "../components/Property/ListProperty";
+import PropertyDetail from "../components/Property/PropertyDetail";
 
 const MainRouter = ({ children }) => {
   const routesData = createBrowserRouter([
@@ -20,6 +21,11 @@ const MainRouter = ({ children }) => {
       path: "/",
       element:<ListProperty/>,
       errorElement:<h1>404</h1>
+    },
+    {
+      path: "/pdetail",
+      element: <PropertyDetail />,
+      errorElement: <h1>Login Error 404</h1>
     },
     {
       path: "/login",
