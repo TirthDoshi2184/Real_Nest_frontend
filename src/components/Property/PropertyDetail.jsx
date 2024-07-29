@@ -8,7 +8,8 @@ const ImageGallery = styled(Grid)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-const id = req.params.id
+const id = useParams().id
+
 
 const PropertyDetail = () => {
   const [singleProperty, setSingleProperty] = useState({});
