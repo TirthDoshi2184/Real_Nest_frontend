@@ -23,7 +23,7 @@ const MainRouter = ({ children }) => {
       errorElement:<h1>404</h1>
     },
     {
-      path: "/pdetail",
+      path: "/pdetail/:id",
       element: <PropertyDetail />,
       errorElement: <h1>Login Error 404</h1>
     },

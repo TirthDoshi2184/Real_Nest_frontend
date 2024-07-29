@@ -62,6 +62,13 @@ const ListProperty = () => {
   const handleLogin = () => {
     navigate("/login");
   };
+  const handleViewProperty = (propertyId) => {
+    navigate(`/pdetail/${propertyId}`);
+  };
+
+
+
+  
 
   const filteredProperties = properties.filter(property =>
     property?.society?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -122,7 +129,7 @@ const ListProperty = () => {
                 <Typography variant="body2" color="textSecondary" component="p">
                   {pr?.price ? `Price: ${pr.price}` : 'Price not available'}
                 </Typography>
-                <Button variant="contained" color="success">View Property</Button>
+                <Button variant="contained" color="success"  onClick={() => handleViewProperty(pr?._id)}>View Property</Button>
               </CardContent>
             </Card>
           </Grid>

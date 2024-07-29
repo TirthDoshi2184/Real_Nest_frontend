@@ -14,6 +14,7 @@ const ImageGallery = styled(Grid)(({ theme }) => ({
 
 const PropertyDetail = () => {
   const id = useParams().id
+  console.log("id..",id)
   const [singleProperty, setSingleProperty] = useState({});
   const [singleflat, setsingleflat] = useState({});
   const [loading, setLoading] = useState(true);
