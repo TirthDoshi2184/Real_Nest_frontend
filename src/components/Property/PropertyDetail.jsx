@@ -1,152 +1,97 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Grid, Card, CardContent, CardMedia, Button, Box, Divider } from '@mui/material';
+import { Container, Typography, Grid, Card, CardMedia, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import { CardActionArea, CardActions } from '@mui/material';
 
 // Styled Grid for Image Gallery
 const ImageGallery = styled(Grid)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-const PropertyDetail = () => {
-  // Sample property data
+const id = req.params.id
 
+const PropertyDetail = () => {
   const [singleProperty, setSingleProperty] = useState({});
-  const AmenityCard = styled(Card)(({ theme }) => ({
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  }));
+  const [singleflat, setsingleflat] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getSocietyData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/society/singlesociety/664ecfafcedd735cc6853bc0");
-        setSingleProperty(response.data); 
-        console.log(response.data); 
-        console.log(response.data.data.name);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+        const societyResponse = await axios.get("http://localhost:3000/society/singlesociety/"+id);
+        setSingleProperty(societyResponse.data);
+        
+        const flatResponse = await axios.get("http://localhost:3000/flat/singleflat/665330f08b336f64c724ca04");
+        setsingleflat(flatResponse.data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
       }
     };
-    getSocietyData(); 
-  }, []); 
-    
-  const property = {
-    name:"Beautifull Beach Islands",
-    images: [
-      'https://via.placeholder.com/400x300',
-    ],
-    // title: {singleSociety.name},
-    description: 'This beautiful beach house offers stunning ocean views and modern amenities. It is located just steps from the sandy shores and is perfect for a relaxing getaway.',
-    amenities: ['3 Bedrooms', '2 Bathrooms', 'Fully Equipped Kitchen', 'Private Pool', 'Wi-Fi'],
-    price: "7899",
-    contact: {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      phone: '123-456-7890',
-    },
-  };
+    fetchData();
+  }, []);
 
-  // const { pname, pamenities } = singleProperty;
-  // const {name, images, title, description, amenities, price, contact,  } = property;
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <div>Error fetching data: {error.message}</div>;
+  }
+
+  const { images = [] } = singleflat?.data || {};
 
   return (
     <Container>
       {/* Property Title and Price */}
       <Typography variant="h3" gutterBottom>
-        {singleProperty?.data?.name} 
-      </Typography>
-      <Typography variant="h3" gutterBottom>
-        {/* {singleProperty.data.constructionStatus} */}
+        {singleProperty?.data?.name || 'Property Name'}
       </Typography>
       <Typography variant="h5" color="textSecondary">
-        {/* ${price} / month */}
+        ${singleflat?.data?.price || 'Price'} - All inclusive
       </Typography>
 
       {/* Image Gallery */}
-      {/* {images?.length > 0 ? (
-        <ImageGallery container spacing={2}>
-          {images?.map((image, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+      <br />
+        <ImageGallery container spacing={1}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <Card>
                 <CardMedia
                   component="img"
-                  alt={title}
-                  height="200"
-                  image={image}
-                  title={title}
+                  height="140"
+                  image={singleflat?.data?.imgUrl} // Adjust according to your API response structure
+                  alt={'Image'} // Adjust according to your API response structure
                 />
               </Card>
             </Grid>
-          ))}
         </ImageGallery>
-      ) : (
-        <Typography variant="body1" color="textSecondary">
-          No images available.
-        </Typography>
-      )} */}
+  
 
       {/* Property Description */}
-      {/* <Typography variant="h6" gutterBottom>
-        Description
+      <Typography variant="h6" gutterBottom>
+        {singleflat?.data?.location}, &nbsp; {singleflat?.data?.interiorType}
       </Typography>
       <Typography paragraph>
-        {description || 'No description available.'}
-      </Typography> */}
-
-      {/* Amenities */}
-     
-
-      {/* <Typography variant="h6" gutterBottom>
-        Amenities
+        {singleProperty?.data?.parkingArea}  Area Parking <br></br>
+        No of Years Property Old : {singleProperty?.data?.yearsOld} Years 
       </Typography>
-      <Grid container spacing={4}>
-        {amenities?.length > 0 ? (
-          amenities.map((amenity, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <AmenityCard>
-                <CardContent>
-                  <Typography variant="h6" component="div">{amenity.name}</Typography>
-                  <Typography variant="body2" color="textSecondary">{amenity.description}</Typography>
-                </CardContent>
-              </AmenityCard>
-            </Grid>
-          ))
-        ) : (
-          <Typography variant="body1" color="textSecondary">
-            No amenities listed.
-          </Typography>
-        )}
-      </Grid> */}
 
-
-     
-     
-
+  
       {/* Contact Information */}
-      {/* <Divider sx={{ my: 3 }} />
       <Typography variant="h6" gutterBottom>
         Contact Information
       </Typography>
       <Typography variant="body1">
-        {contact?.name || 'No contact name available'}
+        {singleflat?.data?.contact?.name || 'No contact name available'}
       </Typography>
       <Typography variant="body1">
-        {contact?.email || 'No contact email available'}
+        {singleflat?.data?.contact?.email || 'No contact email available'}
       </Typography>
       <Typography variant="body1">
-        {contact?.phone || 'No contact phone available'}
+        {singleflat?.data?.contact?.phone || 'No contact phone available'}
       </Typography>
- */}
-      {/* Contact Button */}
-      {/* <Box mt={2}>
-        <Button variant="contained" color="primary">
-          Contact Seller
-        </Button>
-      </Box> */}
     </Container>
   );
 };
