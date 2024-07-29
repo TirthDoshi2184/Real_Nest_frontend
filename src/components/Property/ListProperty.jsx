@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Card, CardContent, CardMedia, Typography, TextField, Box, Button, Select, MenuItem } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { setCities, setSelectedCity,fetchCities } from '../Redux/CityFilter';
 // import { setCities, setSelectedCity, fetchCities } from './CityFilter';
 
@@ -129,7 +129,8 @@ const ListProperty = () => {
                 <Typography variant="body2" color="textSecondary" component="p">
                   {pr?.price ? `Price: ${pr.price}` : 'Price not available'}
                 </Typography>
-                <Button variant="contained" color="success"  onClick={() => handleViewProperty(pr?._id)}>View Property</Button>
+                {/* <Button variant="contained" color="success"  onClick={() => handleViewProperty(pr?._id)}>View Property</Button> */}
+                <Link to ={`/pdetail/${pr?._id}`}>detail</Link>
               </CardContent>
             </Card>
           </Grid>
