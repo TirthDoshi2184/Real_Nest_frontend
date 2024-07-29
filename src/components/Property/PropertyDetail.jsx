@@ -2,16 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, Grid, Card, CardMedia, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 // Styled Grid for Image Gallery
 const ImageGallery = styled(Grid)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-const id = useParams().id
+
 
 
 const PropertyDetail = () => {
+  const id = useParams().id
   const [singleProperty, setSingleProperty] = useState({});
   const [singleflat, setsingleflat] = useState({});
   const [loading, setLoading] = useState(true);
