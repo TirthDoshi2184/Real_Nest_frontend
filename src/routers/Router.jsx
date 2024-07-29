@@ -7,14 +7,20 @@ import UserSignup from "../components/user/UserSignup";
 import { SellerDashboard } from "../components/Dashboard/SellerDashboard";
 import { BuyerDashboard } from "../components/Dashboard/BuyerDashboard";
 import AddProperty from "../components/Property/AddProperty";
+import  ListProperty  from "../components/Property/ListProperty";
 import PropertyDetail from "../components/Property/PropertyDetail";
 
 const MainRouter = ({ children }) => {
   const routesData = createBrowserRouter([
     {
-      path: "/",
+      path: "/signup",
       element: <UserSignup />,
       errorElement: <h1>Login Error 404</h1>
+    },
+    {
+      path: "/",
+      element:<ListProperty/>,
+      errorElement:<h1>404</h1>
     },
     {
       path: "/pdetail",
@@ -27,16 +33,6 @@ const MainRouter = ({ children }) => {
       errorElement: <h1>Login Error 404</h1>,
     },
     {
-      path: "/sellerdashboard",
-      element:<SellerDashboard/>,
-      errorElement:<h1>404</h1>
-    },
-    {
-      path: "/buyerdashboard",
-      element:<BuyerDashboard/>,
-      errorElement:<h1>404</h1>
-    },
-    {
       path: "user",
       element: <UserSideBar />,
       errorElement: <h1>404</h1>,
@@ -47,10 +43,21 @@ const MainRouter = ({ children }) => {
           errorElement: <h1>404</h1>,
         },
         {
-          path: "addproperty",
+          path: "/user/addproperty",
           element:<AddProperty/>,
           errorElement:<h1>404</h1>
+        },
+        {
+          path: "sellerdashboard",
+          element:<SellerDashboard/>,
+          errorElement:<h1>404</h1>
+        },
+        {
+          path: "buyerdashboard",
+          element:<BuyerDashboard/>,
+          errorElement:<h1>404</h1>
         }
+
 
       ]
     },

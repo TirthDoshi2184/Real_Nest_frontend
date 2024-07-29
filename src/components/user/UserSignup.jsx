@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
 import { InputLabel, MenuItem, Select } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 function Copyright(props) {
@@ -38,7 +39,7 @@ const defaultTheme = createTheme();
 
 export default function UserSignup() {
 
-
+  const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm()
   const [loginuser, setloginuser] = React.useState({})
   const submitHandler = async (data) => {
@@ -49,6 +50,7 @@ export default function UserSignup() {
     const response = await axios.post("http://localhost:3000/user/adduser",userObj)
     console.log(response.data.data);
     alert("Added Successfull ")
+    navigate("/login")
     reset()
   }
 
