@@ -26,7 +26,7 @@ const PropertyDetail = () => {
         const societyResponse = await axios.get("http://localhost:3000/society/singlesociety/"+id);
         setSingleProperty(societyResponse.data);
         
-        const flatResponse = await axios.get("http://localhost:3000/flat/singleflat/665330f08b336f64c724ca04");
+        const flatResponse = await axios.get("http://localhost:3000/flat/singleflat/"+id);
         setsingleflat(flatResponse.data);
       } catch (err) {
         setError(err);
