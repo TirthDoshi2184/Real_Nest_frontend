@@ -122,7 +122,8 @@ const ListProperty = () => {
                 <Typography variant="body2" color="textSecondary" component="p">
                   {pr?.price ? `Price: ${pr.price}` : 'Price not available'}
                 </Typography>
-                <Button variant="contained" color="success">View Property</Button>
+                {/* <Button variant="contained" color="success">View Property</Button> */}
+                <Link class="nav-" to="/pdetail/:id">View Property</Link>  
               </CardContent>
             </Card>
           </Grid>
