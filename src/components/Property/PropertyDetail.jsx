@@ -60,7 +60,7 @@ const PropertyDetail = () => {
         {singleProperty?.data?.name} 
       </Typography>
       <Typography variant="h3" gutterBottom>
-        {singleProperty.data.constructionStatus}
+        {/* {singleProperty.data.constructionStatus} */}
       </Typography>
       <Typography variant="h5" color="textSecondary">
         {/* ${price} / month */}
