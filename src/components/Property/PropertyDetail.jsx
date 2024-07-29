@@ -14,7 +14,7 @@ const ImageGallery = styled(Grid)(({ theme }) => ({
 
 const PropertyDetail = () => {
   const id = useParams().id
-  
+  console.log("id..",id)
   const [singleProperty, setSingleProperty] = useState({});
   const [singleflat, setsingleflat] = useState({});
   const [loading, setLoading] = useState(true);
@@ -27,6 +27,7 @@ const PropertyDetail = () => {
         setSingleProperty(societyResponse.data);
         
         const flatResponse = await axios.get("http://localhost:3000/flat/singleflat/"+id);
+        console.log(flatResponse)
         setsingleflat(flatResponse.data);
       } catch (err) {
         setError(err);
@@ -49,9 +50,10 @@ const PropertyDetail = () => {
 
   return (
     <Container>
+      hi... {singleflat.data?.society?.name}
       {/* Property Title and Price */}
       <Typography variant="h3" gutterBottom>
-        {singleProperty?.data?.name || 'Property Name'}
+        {singleflat?.data?.society?.name || 'Property Name'}
       </Typography>
       <Typography variant="h5" color="textSecondary">
         ${singleflat?.data?.price || 'Price'} - All inclusive

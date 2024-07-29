@@ -11,8 +11,10 @@ export const SellerDashboard = () => {
         main: constant.backgroundColor, // Change this to your desired color
       },
     },
+ 
   });
   
+
     return (
       <ThemeProvider theme={defaultTheme}>
         <Container component="main" maxWidth="md">

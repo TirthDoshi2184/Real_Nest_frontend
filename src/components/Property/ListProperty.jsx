@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Card, CardContent, CardMedia, Typography, TextField, Box, Button, Select, MenuItem } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { setCities, setSelectedCity,fetchCities } from '../Redux/CityFilter';
 // import { setCities, setSelectedCity, fetchCities } from './CityFilter';
 
@@ -62,6 +62,13 @@ const ListProperty = () => {
   const handleLogin = () => {
     navigate("/login");
   };
+  const handleViewProperty = (propertyId) => {
+    navigate(`/pdetail/${propertyId}`);
+  };
+
+
+
+  
 
   const filteredProperties = properties.filter(property =>
     property?.society?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -122,8 +129,7 @@ const ListProperty = () => {
                 <Typography variant="body2" color="textSecondary" component="p">
                   {pr?.price ? `Price: ${pr.price}` : 'Price not available'}
                 </Typography>
-                {/* <Button variant="contained" color="success">View Property</Button> */}
-                <Link class="nav-" to="/pdetail/:id">View Property</Link>  
+                <Button variant="contained" color="success">View Property</Button>
               </CardContent>
             </Card>
           </Grid>
