@@ -26,6 +26,7 @@ const PropertyDetail = () => {
         const response = await axios.get("http://localhost:3000/society/singlesociety/664ecfafcedd735cc6853bc0");
         setSingleProperty(response.data); 
         console.log(response.data); 
+        console.log(response.data.data.name);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -49,24 +50,24 @@ const PropertyDetail = () => {
     },
   };
 
-  const { pname, pamenities } = singleProperty;
-  const {name, images, title, description, amenities, price, contact,  } = property;
+  // const { pname, pamenities } = singleProperty;
+  // const {name, images, title, description, amenities, price, contact,  } = property;
 
   return (
     <Container>
       {/* Property Title and Price */}
       <Typography variant="h3" gutterBottom>
-        {name}
+        {singleProperty?.data?.name} 
       </Typography>
       <Typography variant="h3" gutterBottom>
-        {title}
+        {singleProperty.data.constructionStatus}
       </Typography>
       <Typography variant="h5" color="textSecondary">
-        ${price} / month
+        {/* ${price} / month */}
       </Typography>
 
       {/* Image Gallery */}
-      {images?.length > 0 ? (
+      {/* {images?.length > 0 ? (
         <ImageGallery container spacing={2}>
           {images?.map((image, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
@@ -86,20 +87,20 @@ const PropertyDetail = () => {
         <Typography variant="body1" color="textSecondary">
           No images available.
         </Typography>
-      )}
+      )} */}
 
       {/* Property Description */}
-      <Typography variant="h6" gutterBottom>
+      {/* <Typography variant="h6" gutterBottom>
         Description
       </Typography>
       <Typography paragraph>
         {description || 'No description available.'}
-      </Typography>
+      </Typography> */}
 
       {/* Amenities */}
      
 
-      <Typography variant="h6" gutterBottom>
+      {/* <Typography variant="h6" gutterBottom>
         Amenities
       </Typography>
       <Grid container spacing={4}>
@@ -119,14 +120,14 @@ const PropertyDetail = () => {
             No amenities listed.
           </Typography>
         )}
-      </Grid>
+      </Grid> */}
 
 
      
      
 
       {/* Contact Information */}
-      <Divider sx={{ my: 3 }} />
+      {/* <Divider sx={{ my: 3 }} />
       <Typography variant="h6" gutterBottom>
         Contact Information
       </Typography>
@@ -139,13 +140,13 @@ const PropertyDetail = () => {
       <Typography variant="body1">
         {contact?.phone || 'No contact phone available'}
       </Typography>
-
+ */}
       {/* Contact Button */}
-      <Box mt={2}>
+      {/* <Box mt={2}>
         <Button variant="contained" color="primary">
           Contact Seller
         </Button>
-      </Box>
+      </Box> */}
     </Container>
   );
 };
