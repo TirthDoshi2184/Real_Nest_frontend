@@ -72,7 +72,8 @@ const ListProperty = () => {
 
   const filteredProperties = properties.filter(property =>
     property?.society?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property?.price?.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    property?.price?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+    property?.user?.role
   );
 
   return (
@@ -124,12 +125,14 @@ const ListProperty = () => {
               />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="h2">
-                  {pr?.society?.name || 'Society Name'}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
+                  {/* {pr?.society?.name || 'Society Name'} */}
                   {pr?.price ? `Price: ${pr.price}` : 'Price not available'}
                 </Typography>
-                <Button variant="contained" color="success">View Property</Button>
+                <Typography variant="h5" color="textSecondary" component="p">
+                {pr?.role ? `Price: ${pr?.user?.role}` : 'Price not available'}
+                </Typography>
+                {/* <Button variant="contained" color="success">View Property</Button> */}
+                <Link variant="contained" to={`/pdetail/${pr?._id}`}>View Property</Link>
               </CardContent>
             </Card>
           </Grid>
