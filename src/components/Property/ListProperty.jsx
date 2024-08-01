@@ -72,7 +72,8 @@ const ListProperty = () => {
 
   const filteredProperties = properties.filter(property =>
     property?.society?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property?.price?.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    property?.price?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+    property?.user?.role
   );
 
   return (
