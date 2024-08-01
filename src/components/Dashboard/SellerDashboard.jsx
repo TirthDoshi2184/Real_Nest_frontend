@@ -11,6 +11,7 @@ export const SellerDashboard = () => {
         main: constant.backgroundColor, // Change this to your desired color
       },
     },
+    
  
   });
   

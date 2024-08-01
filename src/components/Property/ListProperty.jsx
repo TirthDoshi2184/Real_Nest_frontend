@@ -123,11 +123,15 @@ const ListProperty = () => {
                 title={pr?.society?.name || 'Property Image'}
               />
               <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {pr?.society?.name || 'Society Name'}
+                <Typography gutterBottom variant="h6" component="h2">
+                  {pr?.type || 'Flat type'}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
-                  {pr?.price ? `Price: ${pr.price}` : 'Price not available'}
+                  {pr?.price ? `Price: ${pr.price}` : 'Price not available'},
+                  {pr?.sqrft || 'Flat Size'}
+                </Typography>
+                <Typography>
+        
                 </Typography>
                 {/* <Button variant="contained" color="success"  onClick={() => handleViewProperty(pr?._id)}>View Property</Button> */}
                 <Link to ={`/pdetail/${pr?._id}`}>detail</Link>
