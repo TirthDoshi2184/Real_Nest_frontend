@@ -3,7 +3,7 @@ import { Grid, Card, CardContent, CardMedia, Typography, TextField, Box, Button,
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { setCities, setSelectedCity,fetchCities } from '../Redux/CityFilter';
+import { setCities, setSelectedCity, fetchCities } from '../Redux/CityFilter';
 // import { setCities, setSelectedCity, fetchCities } from './CityFilter';
 
 const cardStyles = {
@@ -68,7 +68,7 @@ const ListProperty = () => {
 
 
 
-  
+
 
   const filteredProperties = properties.filter(property =>
     property?.society?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -146,14 +146,18 @@ const ListProperty = () => {
                   {pr?.type || 'Flat type'}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
-                  {pr?.price ? `Price: ${pr.price}` : 'Price not available'},
-                  {pr?.sqrft || 'Flat Size'}
+                  {pr?.price ? `Price: ${pr.price}` : 'Price not available'} ,
+                  {pr?.location}
                 </Typography>
                 <Typography>
-        
-                </Typography>
+
+                </Typography><br />
                 {/* <Button variant="contained" color="success"  onClick={() => handleViewProperty(pr?._id)}>View Property</Button> */}
-                <Link to ={`/pdetail/${pr?._id}`}>detail</Link>
+                <Link to={`/pdetail/${pr?._id}`} style={{ textDecoration: 'none' }}>
+                  <button style={{  padding:'5px 5px',borderRadius:"3px",fontSize: '16px', cursor: 'pointer',color:'white',backgroundColor:'green',border:'none' }}>
+                    Detail
+                  </button>
+                </Link>
               </CardContent>
             </Card>
           </Grid>

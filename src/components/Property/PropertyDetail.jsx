@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Grid, Card, CardMedia, CircularProgress } from '@mui/material';
+import { Container, Typography, Grid, Card, CardMedia, CardContent, CircularProgress, Divider, Box, CardActions, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -25,10 +25,10 @@ const PropertyDetail = () => {
       try {
         const societyResponse = await axios.get("http://localhost:3000/society/singlesociety/"+id);
         setSingleProperty(societyResponse.data);
-        
-        const flatResponse = await axios.get("http://localhost:3000/flat/singleflat/"+id);
-        console.log(flatResponse)
+
+        const flatResponse = await axios.get(`http://localhost:3000/flat/singleflat/${id}`);
         setsingleflat(flatResponse.data);
+        console.log(flatResponse.data);
       } catch (err) {
         setError(err);
       } finally {
@@ -52,52 +52,111 @@ const PropertyDetail = () => {
     <Container>
       hi... {singleflat.data?.society?.name}
       {/* Property Title and Price */}
-      <Typography variant="h3" gutterBottom>
+      <Typography variant="h2" gutterBottom align="center" fontFamily={'inherit'}>
         {singleflat?.data?.society?.name || 'Property Name'}
       </Typography>
-      <Typography variant="h5" color="textSecondary">
+      <Typography variant="h4" color="textSecondary" gutterBottom align="center" fontFamily={'monospace'}>
         ${singleflat?.data?.price || 'Price'} - All inclusive
       </Typography>
 
       {/* Image Gallery */}
-      <br />
-        <ImageGallery container spacing={1}>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={singleflat?.data?.imgUrl} // Adjust according to your API response structure
-                  alt={'Image'} // Adjust according to your API response structure
-                />
-              </Card>
-            </Grid>
-        </ImageGallery>
-  
-
+      {/* <ImageGalleryContainer>
+        <Grid container spacing={2}>
+          <ImageGalleryItem item xs={12}>
+            <PropertyCard>
+              <CardMedia
+                component="img"
+                height="200"
+                image={singleProperty?.data?.imgUrl} // Assuming `image` has `imgUrl` property
+                alt="Property image"
+              />
+              <CardContent>
+                <Typography variant="body2" color="textSecondary">
+                  Image
+                </Typography>
+              </CardContent>
+            </PropertyCard>
+          </ImageGalleryItem>
+        </Grid>
+      </ImageGalleryContainer> */}
       {/* Property Description */}
-      <Typography variant="h6" gutterBottom>
-        {singleflat?.data?.location}, &nbsp; {singleflat?.data?.interiorType}
-      </Typography>
-      <Typography paragraph>
-        {singleProperty?.data?.parkingArea}  Area Parking <br></br>
-        No of Years Property Old : {singleProperty?.data?.yearsOld} Years 
-      </Typography>
 
-  
+
       {/* Contact Information */}
-      <Typography variant="h6" gutterBottom>
-        Contact Information
-      </Typography>
-      <Typography variant="body1">
-        {singleflat?.data?.contact?.name || 'No contact name available'}
-      </Typography>
-      <Typography variant="body1">
-        {singleflat?.data?.contact?.email || 'No contact email available'}
-      </Typography>
-      <Typography variant="body1">
-        {singleflat?.data?.contact?.phone || 'No contact phone available'}
-      </Typography>
+      <Divider />
+      <Box marginY={4}>
+        <Typography variant="h3" gutterBottom fontFamily={'inherit'}>
+          Contact Information
+        </Typography>
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          Owner Name: {singleflat?.data?.user?.fullname || 'No contact name available'}
+        </Typography>
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          Contact No: {singleflat?.data?.user?.mobileNo || 'No contact email available'}
+        </Typography>
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          Role: {singleflat?.data?.user?.role || 'No contact phone available'}
+        </Typography>
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          {singleflat?.data?.location} , {singleflat?.data?.interiorType}
+        </Typography>
+
+      </Box>
+
+
+      <Card>
+        {/* Displaying property image */}
+        {/* <CardMedia
+            component="img"
+            height="200"
+            image={singleProperty?.data?.data?.imgUrl} // Assuming `image` has `
+            /> */}
+        <Divider />
+        <CardContent>
+          <Typography variant="h3" component="div" fontFamily={'inherit'} >
+            More Details
+          </Typography><br />
+          <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+            Price Breakup : {singleflat?.data?.price}
+          </Typography>
+
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
+            Prime Location: {singleflat?.data?.location}
+          </Typography>
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
+            Furnishing : {singleflat?.data?.interiorType}
+          </Typography>
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
+            Status : {singleflat?.data?.status}
+          </Typography>
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
+            No of Floors : {singleflat?.data?.society?.floors}
+          </Typography>
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
+            Construction Status: {singleflat?.data?.society?.constructionStatus}
+          </Typography>
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
+            Property Old: {singleProperty?.data?.yearsOld} years
+          </Typography>
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
+            Parking Area: {singleflat?.data?.society?.parkingArea}
+          </Typography>
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
+            Garden Area: {singleflat?.data?.society?.gardenArea} sqrft
+          </Typography>
+        </CardContent>
+
+        <CardActions>
+          <Button size="small" color="primary" variant="contained" fontFamily={'monospace'}>
+            Contact the Owner
+          </Button>
+          {/* Add more actions if needed */}
+        </CardActions>
+      </Card>
+
+
+
+
     </Container>
   );
 };
