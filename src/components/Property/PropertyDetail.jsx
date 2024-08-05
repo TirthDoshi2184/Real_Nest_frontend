@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, Grid, Card, CardMedia, CardContent, CircularProgress, Divider, Box, CardActions, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Modal } from 'react-bootstrap';
+
+
+{
+  /* The following line can be included in your src/index.js or App.js file */
+}
+
 
 // Styled Card for Property Details
 const PropertyCard = styled(Card)(({ theme }) => ({
@@ -19,21 +27,12 @@ const ImageGalleryContainer = styled(Box)(({ theme }) => ({
 }));
 
 // Styled Grid for Image Gallery
-const ImageGallery = styled(Grid)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
+const ImageGalleryItem = styled(Grid)(({ theme }) => ({
+  padding: theme.spacing(1),
 }));
 
 const PropertyDetail = () => {
-  const bodyStyle = {
-    backgroundColor: "#F5F5F5", // Replace with your desired color
-  };
-
-  React.useEffect(() => {
-    document.body.style.backgroundColor = bodyStyle.backgroundColor;
-  }, [bodyStyle.backgroundColor]);
-
-  const id = useParams().id;
-  console.log("id..", id);
+  const { id } = useParams();
   const [singleProperty, setSingleProperty] = useState({});
   const [singleflat, setsingleflat] = useState({});
   const [loading, setLoading] = useState(true);
@@ -47,14 +46,10 @@ const PropertyDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const societyResponse = await axios.get(
-          "http://localhost:3000/society/singlesociety/" + id
-        );
+        const societyResponse = await axios.get(`http://localhost:3000/society/singlesociety/${id}`);
         setSingleProperty(societyResponse.data);
 
-        const flatResponse = await axios.get(
-          `http://localhost:3000/flat/singleflat/${id}`
-        );
+        const flatResponse = await axios.get(`http://localhost:3000/flat/singleflat/${id}`);
         setsingleflat(flatResponse.data);
         console.log(flatResponse.data);
       } catch (err) {
@@ -64,218 +59,156 @@ const PropertyDetail = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [id]);
 
   if (loading) {
-    return <CircularProgress />;
+    return (
+      <Container>
+        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
   }
 
   if (error) {
-    return <div>Error fetching data: {error.message}</div>;
+    return (
+      <Container>
+        <Typography color="error">Error fetching data: {error.message}</Typography>
+      </Container>
+    );
   }
 
   const { images = [] } = singleflat?.data || {};
 
   return (
-    <Box
-      sx={{
-        marginLeft: "10%",
-        width: "100%", // Set the desired width
-        maxWidth: "1552px", // Optionally, set a max width
-      }}
-    >
-      hi... {singleflat.data?.society?.name}
+    <Container>
       {/* Property Title and Price */}
-      <Typography
-        variant="h2"
-        gutterBottom
-        align="center"
-        fontFamily={"inherit"}
-      >
-        {singleflat?.data?.society?.name || "Property Name"}
+      <Typography variant="h2" gutterBottom align="center" fontFamily={'inherit'}>
+        {singleflat?.data?.society?.name || 'Property Name'}
       </Typography>
-      <Typography
-        variant="h4"
-        color="textSecondary"
-        gutterBottom
-        align="center"
-        fontFamily={"monospace"}
-      >
-        ${singleflat?.data?.price || "Price"} - All inclusive
+      <Typography variant="h4" color="textSecondary" gutterBottom align="center" fontFamily={'monospace'}>
+        ${singleflat?.data?.price || 'Price'} - All inclusive
       </Typography>
-      <Typography variant="h4" gutterBottom fontFamily={"inherit"}>
-        Image Gallery
-      </Typography>
-      <Grid container spacing={2}>
-        {images.length > 0 ? (
-          images.map((img, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={singleflat.data?.imgUrl} // Ensure `img.url` is the correct path to the image
-                  alt={`Property Image ${index + 1}`}
-                />
-                <CardContent>
-                  <Typography variant="body2" color="textSecondary">
-                    Image {index + 1}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
-        ) : (
-          <Typography variant="h6" align="center">
-            No images available
-          </Typography>
-        )}
-      </Grid>
-      Property Description
+
+      {/* Image Gallery */}
+      {/* <ImageGalleryContainer>
+        <Grid container spacing={2}>
+          <ImageGalleryItem item xs={12}>
+            <PropertyCard>
+              <CardMedia
+                component="img"
+                height="200"
+                image={singleProperty?.data?.imgUrl} // Assuming `image` has `imgUrl` property
+                alt="Property image"
+              />
+              <CardContent>
+                <Typography variant="body2" color="textSecondary">
+                  Image
+                </Typography>
+              </CardContent>
+            </PropertyCard>
+          </ImageGalleryItem>
+        </Grid>
+      </ImageGalleryContainer> */}
+      {/* Property Description */}
+
+
       {/* Contact Information */}
       <Divider />
-      <Box marginY={4}>
+      {/* <Box marginY={4}>
         <Typography variant="h3" gutterBottom fontFamily={'inherit'}>
           Contact Information
         </Typography>
-        <Typography
-          variant="h5"
-          color="textSecondary"
-          paragraph
-          fontFamily={"monospace"}
-        >
-          Owner Name:{" "}
-          {singleflat?.data?.user?.fullname || "No contact name available"}
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          Owner Name: {singleflat?.data?.user?.fullname || 'No contact name available'}
         </Typography>
-        <Typography
-          variant="h5"
-          color="textSecondary"
-          paragraph
-          fontFamily={"monospace"}
-        >
-          Contact No:{" "}
-          {singleflat?.data?.user?.mobileNo || "No contact email available"}
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          Contact No: {singleflat?.data?.user?.mobileNo || 'No contact email available'}
         </Typography>
-        <Typography
-          variant="h5"
-          color="textSecondary"
-          paragraph
-          fontFamily={"monospace"}
-        >
-          Role: {singleflat?.data?.user?.role || "No contact phone available"}
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          Role: {singleflat?.data?.user?.role || 'No contact phone available'}
         </Typography>
-        <Typography
-          variant="h5"
-          color="textSecondary"
-          paragraph
-          fontFamily={"monospace"}
-        >
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
           {singleflat?.data?.location} , {singleflat?.data?.interiorType}
         </Typography>
 
-      </Box>
+      </Box> */}
 
 
       <Card>
         {/* Displaying property image */}
         {/* <CardMedia
-          component="img"
-          // height="200"
-          image={singleflat?.data?.imgUrl} // Assuming `image` has `
-        /> */}
-
-        <CardContent >
-          <Typography variant="h3" component="div" fontFamily={"inherit"}>
+            component="img"
+            height="200"
+            image={singleProperty?.data?.data?.imgUrl} // Assuming `image` has `
+            /> */}
+        <Divider />
+        <CardContent>
+          <Typography variant="h3" component="div" fontFamily={'inherit'} >
             More Details
-          </Typography>
-          <br />
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            paragraph
-            fontFamily={"monospace"}
-          >
+          </Typography><br />
+          <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
             Price Breakup : {singleflat?.data?.price}
           </Typography>
 
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"monospace"}
-          >
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
             Prime Location: {singleflat?.data?.location}
           </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"monospace"}
-          >
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
             Furnishing : {singleflat?.data?.interiorType}
           </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"monospace"}
-          >
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
             Status : {singleflat?.data?.status}
           </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"monospace"}
-          >
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
             No of Floors : {singleflat?.data?.society?.floors}
           </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"monospace"}
-          >
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
             Construction Status: {singleflat?.data?.society?.constructionStatus}
           </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"monospace"}
-          >
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
             Property Old: {singleProperty?.data?.yearsOld} years
           </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"monospace"}
-          >
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
             Parking Area: {singleflat?.data?.society?.parkingArea}
           </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"monospace"}
-          >
+          <Typography variant="h5" color="textSecondary" marginTop={2} fontFamily={'monospace'}>
             Garden Area: {singleflat?.data?.society?.gardenArea} sqrft
           </Typography>
         </CardContent>
 
         <CardActions>
-          <Button size="small" color="primary" variant="contained" fontFamily={'monospace'}>
-            Contact the Owner
+          {/* <Link to={`/cntowner`} style={{ textDecoration: 'none' }}> */}
+          {/* <button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} className='brn btn-success'>
+              Contact Owner
+            </button> */}
+
+
+          <Button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} onClick={handleShow}>
+            Contact Owner
           </Button>
-          {/* Add more actions if needed */}
-        </CardActions>
-      </Card>
 
-
-
-
-    </Container>
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Owner Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>OWNER NAME : {singleflat.data?.user?.fullname || "No Name Available"}</Modal.Body>
+            <Modal.Body>Contact No: {singleflat?.data?.user?.mobileNo || "No Contact Available"}</Modal.Body>
+            <Modal.Body>Area : {singleflat?.data?.location} , {singleflat?.data?.interiorType}</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Contact 
+            </Button>
+            <Button variant="primary" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* </Link> */}
+      </CardActions>
+    </Card>
+    </Container >
   );
 };
 
