@@ -75,27 +75,8 @@ const ListProperty = () => {
     property?.price?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
     property?.user?.role
   );
-
-  const RoundedCard = styled(Card)(({ theme }) => ({
-    borderRadius: '15px', // Rounded corners
-    width: '300px',       // Adjust width as needed
-    boxShadow: theme.shadows[3],
-  }));
   return (
     <div>
-       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-       <RoundedCard>
-      <CardContent>
-        <Typography variant="h5" component="div">
-          {/* {title} */}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {/* {content} */}
-        </Typography>
-      </CardContent>
-    </RoundedCard>
-    </div>
-
       <Box sx={{ bgcolor: '#f0f0f0', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" component="div">
           Company Name
