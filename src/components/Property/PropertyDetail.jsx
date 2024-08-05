@@ -293,7 +293,7 @@ const PropertyDetail = () => {
               variant="h5"
               color="textSecondary"
               fontFamily={"monospace"}
-              sx={{ marginLeft: 2 , borderLeft:"2px black solid"}}
+              sx={{ marginLeft: 2 , borderLeft:"2px black solid", paddingLeft:"20px"}}
             >
             {singleProperty?.data?.yearsOld || "Unknown"} years old
             </Typography>
