@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardContent, CardMedia, Typography, TextField, Box, Button, Select, MenuItem } from '@mui/material';
+import { Grid, Card, CardContent, CardMedia, Typography, TextField, Box, Button, Select, MenuItem, styled } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
@@ -75,7 +75,6 @@ const ListProperty = () => {
     property?.price?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
     property?.user?.role
   );
-
   return (
     <div>
       <Box sx={{ bgcolor: '#f0f0f0', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -146,6 +145,7 @@ const ListProperty = () => {
         ))}
       </Grid>
     </div>
+    
   );
 };
 
