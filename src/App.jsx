@@ -5,6 +5,7 @@ import './App.css'
 import MainRouter from './routers/Router'
 import { Provider } from 'react-redux'
 import store from './components/Redux/store'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [count, setCount] = useState(0)

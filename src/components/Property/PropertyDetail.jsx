@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, Grid, Card, CardMedia, CardContent, CircularProgress, Divider, Box, CardActions, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Modal } from 'react-bootstrap';
+
+
+{
+  /* The following line can be included in your src/index.js or App.js file */
+}
+
 
 // Styled Card for Property Details
 const PropertyCard = styled(Card)(({ theme }) => ({
@@ -29,6 +37,11 @@ const PropertyDetail = () => {
   const [singleflat, setsingleflat] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,7 +116,7 @@ const PropertyDetail = () => {
 
       {/* Contact Information */}
       <Divider />
-      <Box marginY={4}>
+      {/* <Box marginY={4}>
         <Typography variant="h3" gutterBottom fontFamily={'inherit'}>
           Contact Information
         </Typography>
@@ -120,7 +133,7 @@ const PropertyDetail = () => {
           {singleflat?.data?.location} , {singleflat?.data?.interiorType}
         </Typography>
 
-      </Box>
+      </Box> */}
 
 
       <Card>
@@ -166,17 +179,36 @@ const PropertyDetail = () => {
         </CardContent>
 
         <CardActions>
-          <Button size="small" color="primary" variant="contained" fontFamily={'monospace'}>
-            Contact the Owner
+          {/* <Link to={`/cntowner`} style={{ textDecoration: 'none' }}> */}
+          {/* <button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} className='brn btn-success'>
+              Contact Owner
+            </button> */}
+
+
+          <Button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} onClick={handleShow}>
+            Contact Owner
           </Button>
-          {/* Add more actions if needed */}
-        </CardActions>
-      </Card>
 
-
-
-
-    </Container>
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Owner Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>OWNER NAME : {singleflat.data?.user?.fullname || "No Name Available"}</Modal.Body>
+            <Modal.Body>Contact No: {singleflat?.data?.user?.mobileNo || "No Contact Available"}</Modal.Body>
+            <Modal.Body>Area : {singleflat?.data?.location} , {singleflat?.data?.interiorType}</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Contact 
+            </Button>
+            <Button variant="primary" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* </Link> */}
+      </CardActions>
+    </Card>
+    </Container >
   );
 };
 
