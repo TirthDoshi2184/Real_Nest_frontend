@@ -7,11 +7,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from 'react-bootstrap';
 
 
-{
-
-}
-
-
 // Styled Card for Property Details
 const PropertyCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -90,59 +85,7 @@ const PropertyDetail = () => {
       <Typography variant="h4" color="textSecondary" gutterBottom align="center" fontFamily={'monospace'}>
         ${singleflat?.data?.price || 'Price'} - All inclusive
       </Typography>
-
-      {/* Image Gallery */}
-      {/* <ImageGalleryContainer>
-        <Grid container spacing={2}>
-          <ImageGalleryItem item xs={12}>
-            <PropertyCard>
-              <CardMedia
-                component="img"
-                height="200"
-                image={singleProperty?.data?.imgUrl} // Assuming `image` has `imgUrl` property
-                alt="Property image"
-              />
-              <CardContent>
-                <Typography variant="body2" color="textSecondary">
-                  Image
-                </Typography>
-              </CardContent>
-            </PropertyCard>
-          </ImageGalleryItem>
-        </Grid>
-      </ImageGalleryContainer> */}
-      {/* Property Description */}
-
-
-      {/* Contact Information */}
-      <Divider />
-      {/* <Box marginY={4}>
-        <Typography variant="h3" gutterBottom fontFamily={'inherit'}>
-          Contact Information
-        </Typography>
-        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
-          Owner Name: {singleflat?.data?.user?.fullname || 'No contact name available'}
-        </Typography>
-        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
-          Contact No: {singleflat?.data?.user?.mobileNo || 'No contact email available'}
-        </Typography>
-        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
-          Role: {singleflat?.data?.user?.role || 'No contact phone available'}
-        </Typography>
-        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
-          {singleflat?.data?.location} , {singleflat?.data?.interiorType}
-        </Typography>
-
-      </Box> */}
-
-
       <Card>
-        {/* Displaying property image */}
-        {/* <CardMedia
-            component="img"
-            height="200"
-            image={singleProperty?.data?.data?.imgUrl} // Assuming `image` has `
-            /> */}
         <Divider />
         <CardContent>
           <Typography variant="h3" component="div" fontFamily={'inherit'} >
@@ -179,11 +122,6 @@ const PropertyDetail = () => {
         </CardContent>
 
         <CardActions>
-          {/* <Link to={`/cntowner`} style={{ textDecoration: 'none' }}> */}
-          {/* <button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} className='brn btn-success'>
-              Contact Owner
-            </button> */}
-
 
           <Button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} onClick={handleShow}>
             Contact Owner
