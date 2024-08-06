@@ -289,7 +289,7 @@ const PropertyDetail = () => {
               fontFamily={"monospace"}
               underline="hover"
             >
-              {singleflat?.data?.society?.name || "Society Name"}
+              {singleflat?.data?.society?.name || "Society Name"} qwerty
             </Link>
             <Typography
               variant="h5"
