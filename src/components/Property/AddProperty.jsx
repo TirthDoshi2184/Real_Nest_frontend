@@ -78,19 +78,17 @@ const AddProperty = () => {
   };
 
   return (
-    <Box>
-      <Paper elevation={0} style={{ padding: '20px', marginBottom: 20, background: '#1976d2', color: '#ffffff' }}>
-        <Typography variant="h5" align="center" style={{ fontWeight: 'bold', letterSpacing: 1 }}>
-          Add Property Form
+    <Box sx={{ padding: 4, backgroundColor: '#f4f4f9' }}>
+      <Paper elevation={3} sx={{ padding: 4, marginBottom: 4, backgroundColor: '#ffffff', borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+        <Typography variant="h4" align="center" color="textPrimary" gutterBottom>
+          Add New Property
         </Typography>
-      </Paper>
-      <Paper elevation={3} style={{ maxWidth: 800, margin: 'auto', padding: '20px', background: '#f5f5f5', borderRadius: 10, boxShadow: '0px 3px 15px rgba(0, 0, 0, 0.2)' }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <FormControl component="fieldset" fullWidth>
-                <FormLabel component="legend" style={{ marginBottom: 10 }}>Type of Flat</FormLabel>
-                <RadioGroup row aria-label="type" name="type" value={propertyData.type} onChange={handleChange}>
+              <FormControl fullWidth>
+                <FormLabel component="legend">Type of Flat</FormLabel>
+                <RadioGroup row name="type" value={propertyData.type} onChange={handleChange}>
                   {typeOptions.map((option) => (
                     <FormControlLabel key={option} value={option} control={<Radio />} label={option} />
                   ))}
@@ -192,10 +190,10 @@ const AddProperty = () => {
                   variant="contained"
                   component="span"
                   fullWidth
-                  style={{ marginTop: 20, background: '#4caf50', color: '#ffffff', '&:hover': { background: '#388e3c' } }}
+                  sx={{ marginTop: 2, backgroundColor: '#1976d2', color: '#ffffff', '&:hover': { backgroundColor: '#115293' } }}
                   startIcon={<PhotoCamera />}
                 >
-                  Upload Image
+                  Upload Property Image
                 </Button>
               </label>
             </Grid>
@@ -203,11 +201,10 @@ const AddProperty = () => {
               <Button
                 type="submit"
                 variant="contained"
-                color="primary"
                 fullWidth
-                style={{ marginTop: 20, background: '#f50057', color: '#ffffff', '&:hover': { background: '#c51162' } }}
+                sx={{ marginTop: 2, backgroundColor: '#f50057', color: '#ffffff', '&:hover': { backgroundColor: '#c51162' } }}
               >
-                Submit
+                Submit Property
               </Button>
             </Grid>
           </Grid>

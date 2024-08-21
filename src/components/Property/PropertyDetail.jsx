@@ -25,25 +25,22 @@ const ImageGallery = styled(Grid)(({ theme }) => ({
 
 const PropertyDetail = () => {
   const bodyStyle = {
-    backgroundColor: "#F5F5F5", // Replace with your desired color
+    backgroundColor: "#F5F5F5", // Background color consistent with theme
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.body.style.backgroundColor = bodyStyle.backgroundColor;
   }, [bodyStyle.backgroundColor]);
 
   const id = useParams().id;
-  console.log("id..", id);
   const [singleProperty, setSingleProperty] = useState({});
   const [singleflat, setsingleflat] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +54,6 @@ const PropertyDetail = () => {
           `http://localhost:3000/flat/singleflat/${id}`
         );
         setsingleflat(flatResponse.data);
-        console.log(flatResponse.data);
       } catch (err) {
         setError(err);
       } finally {
@@ -65,7 +61,7 @@ const PropertyDetail = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [id]);
 
   if (loading) {
     return <CircularProgress />;
@@ -81,87 +77,118 @@ const PropertyDetail = () => {
     <Box
       sx={{
         marginLeft: "10%",
-        width: "100%", // Set the desired width
-        maxWidth: "1552px", // Optionally, set a max width
+        width: "100%",
+        maxWidth: "1552px",
       }}
     >
-      <Card sx={{ border: "2px black solid", borderRadius: "10px", marginTop: 2 }}>
-        <CardContent>
-        <Typography
-        variant="h2"
-        gutterBottom
-        align="center"
-        fontFamily={"inherit"}
+      <Card
+        sx={{
+          border: "2px solid #e0e0e0",
+          borderRadius: "15px",
+          marginTop: 2,
+          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+          overflow: "hidden",
+          backgroundColor: "#FFFFFF", // White card background
+        }}
       >
-        {singleflat?.data?.society?.name || "Property Name"}
-      </Typography>
-      <Typography
-        variant="h4"
-        color="textSecondary"
-        gutterBottom
-        align="center"
-        fontFamily={"monospace"}
-      >
-        ${singleflat?.data?.price || "Price"} - All inclusive
-      </Typography>
-      <Grid container spacing={2}>
-        {images.length > 0 ? (
-          images.map((img, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={singleflat.data?.imgUrl} // Ensure `img.url` is the correct path to the image
-                  alt={`Property Image ${index + 1}`}
-                />
-                <CardContent>
-                  <Typography variant="body2" color="textSecondary">
-                    Image {index + 1}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
-        ) : (
-          <Typography variant="h6" align="center">
-            No images available
-          </Typography>
-        )}
-      </Grid>
-
-        </CardContent>
+        <Grid container>
+          <Grid item xs={12} md={6}>
+            <CardMedia
+              component="img"
+              image={singleflat?.data?.imgUrl || "https://via.placeholder.com/400"}
+              alt={singleflat?.data?.society?.name || "Property Image"}
+              sx={{
+                objectFit: "cover",
+                height: "100%",
+                maxHeight: "400px",
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <CardContent
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                padding: 4,
+              }}
+            >
+              <Typography
+                variant="h3"
+                gutterBottom
+                align="left"
+                fontFamily={"Montserrat, Arial, sans-serif"}
+                sx={{ color: "#00274D" }} // Navy Blue text
+              >
+                {singleflat?.data?.society?.name || "Property Name"}
+              </Typography>
+              <Typography
+                variant="h5"
+                color="textSecondary"
+                gutterBottom
+                align="left"
+                fontFamily={"Montserrat, Arial, sans-serif"}
+              >
+                ${singleflat?.data?.price || "Price"} - All inclusive
+              </Typography>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                align="left"
+                fontFamily={"Montserrat, Arial, sans-serif"}
+                sx={{ marginTop: 2 }}
+              >
+                Prime Location: {singleflat?.data?.location}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                align="left"
+                fontFamily={"Montserrat, Arial, sans-serif"}
+              >
+                Furnishing: {singleflat?.data?.interiorType}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                align="left"
+                fontFamily={"Montserrat, Arial, sans-serif"}
+              >
+                Status: {singleflat?.data?.status}
+              </Typography>
+            </CardContent>
+          </Grid>
+        </Grid>
       </Card>
-      {/* Property Title and Price */}
-     
-      {/* Property Description */}
-      <Card sx={{ border: "2px black solid", borderRadius: "10px", marginTop: 2 }}>
-        {/* Displaying property image */}
-        {/* <CardMedia
-          component="img"
-          // height="200"
-          image={singleflat?.data?.imgUrl} // Assuming `image` has `
-        /> */}
 
-        <CardContent >
-          <Typography variant="h3" component="div" fontFamily={"inherit"}>
+      <Card
+        sx={{
+          border: "2px solid #e0e0e0",
+          borderRadius: "15px",
+          marginTop: 2,
+          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+          overflow: "hidden",
+          backgroundColor: "#FFFFFF", // White card background
+        }}
+      >
+        <CardContent>
+          <Typography variant="h3" component="div" fontFamily={"Montserrat, Arial, sans-serif"} sx={{ color: "#00274D" }}>
             More Details
           </Typography>
-          <br />
+          <Divider sx={{ marginY: 2, backgroundColor: "#D4AF37" }} /> {/* Gold divider */}
           <Typography
             variant="h5"
             color="textSecondary"
             paragraph
-            fontFamily={"monospace"}
+            fontFamily={"Montserrat, Arial, sans-serif"}
           >
-            Price Breakup : {singleflat?.data?.price}
+            Price Breakup: {singleflat?.data?.price}
           </Typography>
-
           <Typography
             variant="h5"
             color="textSecondary"
             marginTop={2}
-            fontFamily={"monospace"}
+            fontFamily={"Montserrat, Arial, sans-serif"}
           >
             Prime Location: {singleflat?.data?.location}
           </Typography>
@@ -169,31 +196,31 @@ const PropertyDetail = () => {
             variant="h5"
             color="textSecondary"
             marginTop={2}
-            fontFamily={"monospace"}
+            fontFamily={"Montserrat, Arial, sans-serif"}
           >
-            Furnishing : {singleflat?.data?.interiorType}
+            Furnishing: {singleflat?.data?.interiorType}
           </Typography>
           <Typography
             variant="h5"
             color="textSecondary"
             marginTop={2}
-            fontFamily={"monospace"}
+            fontFamily={"Montserrat, Arial, sans-serif"}
           >
-            Status : {singleflat?.data?.status}
+            Status: {singleflat?.data?.status}
           </Typography>
           <Typography
             variant="h5"
             color="textSecondary"
             marginTop={2}
-            fontFamily={"monospace"}
+            fontFamily={"Montserrat, Arial, sans-serif"}
           >
-            No of Floors : {singleflat?.data?.society?.floors}
+            No of Floors: {singleflat?.data?.society?.floors}
           </Typography>
           <Typography
             variant="h5"
             color="textSecondary"
             marginTop={2}
-            fontFamily={"monospace"}
+            fontFamily={"Montserrat, Arial, sans-serif"}
           >
             Construction Status: {singleflat?.data?.society?.constructionStatus}
           </Typography>
@@ -201,15 +228,15 @@ const PropertyDetail = () => {
             variant="h5"
             color="textSecondary"
             marginTop={2}
-            fontFamily={"monospace"}
+            fontFamily={"Montserrat, Arial, sans-serif"}
           >
-            Property Old: {singleProperty?.data?.yearsOld} years
+            Property Age: {singleProperty?.data?.yearsOld} years
           </Typography>
           <Typography
             variant="h5"
             color="textSecondary"
             marginTop={2}
-            fontFamily={"monospace"}
+            fontFamily={"Montserrat, Arial, sans-serif"}
           >
             Parking Area: {singleflat?.data?.society?.parkingArea}
           </Typography>
@@ -217,59 +244,103 @@ const PropertyDetail = () => {
             variant="h5"
             color="textSecondary"
             marginTop={2}
-            fontFamily={"monospace"}
+            fontFamily={"Montserrat, Arial, sans-serif"}
           >
-            Garden Area: {singleflat?.data?.society?.gardenArea} sqrft
+            Garden Area: {singleflat?.data?.society?.gardenArea} sqft
           </Typography>
           <CardActions>
-          <Button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} onClick={handleShow}>
-            Contact Owner
-          </Button>
-
-          <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Owner Details</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>OWNER NAME : {singleflat.data?.user?.fullname || "No Name Available"}</Modal.Body>
-            <Modal.Body>Contact No: {singleflat?.data?.user?.mobileNo || "No Contact Available"}</Modal.Body>
-            <Modal.Body>Area : {singleflat?.data?.location} , {singleflat?.data?.interiorType}</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Contact 
+            <Button
+              style={{
+                padding: '10px 10px',
+                marginLeft: '.7rem',
+                borderRadius: "3px",
+                fontSize: '16px',
+                cursor: 'pointer',
+                color: 'white',
+                backgroundColor: '#00274D', // Navy Blue button
+                border: 'none',
+              }}
+              onClick={handleShow}
+            >
+              Contact Owner
             </Button>
-            <Button variant="primary" onClick={handleClose}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
 
-            {/* Add more actions if needed */}
+            <Modal show={show} onHide={handleClose}>
+              <Modal.Header closeButton  style={{
+                        backgroundColor: '#00274D', // Navy Blue header
+                        borderBottom: '2px solid #D4AF37', // Gold border at the bottom
+                        color: '#FFFFFF', // White text
+                    }}>
+                <Modal.Title>Owner Details</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>OWNER NAME: {singleflat.data?.user?.fullname || "No Name Available"}</Modal.Body>
+              <Modal.Body>Contact No: {singleflat?.data?.user?.mobileNo || "No Contact Available"}</Modal.Body>
+              <Modal.Body>Area: {singleflat?.data?.location} , {singleflat?.data?.interiorType}</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}  style={{
+                            backgroundColor: '#D4AF37', // Gold background
+                            borderColor: '#D4AF37', // Gold border
+                            color: '#00274D', // Navy Blue text
+                            fontFamily: 'Montserrat, Arial, sans-serif',
+                        }}>
+                  Contact
+                </Button>
+                <Button variant="primary" onClick={handleClose}  style={{
+                            backgroundColor: '#00274D', // Navy Blue background
+                            borderColor: '#00274D', // Navy Blue border
+                            color: '#FFFFFF', // White text
+                            fontFamily: 'Montserrat, Arial, sans-serif',
+                        }}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </CardActions>
         </CardContent>
       </Card>
-      <Card sx={{ border: "2px black solid", borderRadius: "10px", marginTop: 2 }}>
+
+      <Card
+        sx={{
+          border: "2px solid #e0e0e0",
+          borderRadius: "15px",
+          marginTop: 2,
+          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+          overflow: "hidden",
+          backgroundColor: "#FFFFFF", // White card background
+        }}
+      >
         <CardContent>
-          <Typography variant="h3" component="div" fontFamily={"inherit"}>
+          <Typography variant="h3" component="div" fontFamily={"Montserrat, Arial, sans-serif"} sx={{ color: "#00274D" }}>
             About Project
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
-            <BuildingIcon sx={{ marginRight: 1 }} />
+            <BuildingIcon sx={{ marginRight: 1, color: "#D4AF37" }} /> {/* Gold icon */}
             <Link
               href={`/society/${singleflat?.data?.society?.id}`}
               variant="h5"
               color="primary"
-              fontFamily={"monospace"}
+              fontFamily={"Montserrat, Arial, sans-serif"}
               underline="hover"
             >
-              {singleflat?.data?.society?.name || "Society Name"} qwerty
+              {singleflat?.data?.society?.name || "Society Name"}
             </Link>
             <Typography
               variant="h5"
               color="textSecondary"
-              fontFamily={"monospace"}
-              sx={{ marginLeft: 2 , borderLeft:"2px black solid", paddingLeft:"20px"}}
+              fontFamily={"Montserrat, Arial, sans-serif"}
+              sx={{ marginLeft: 2, borderLeft: "2px solid #00274D", paddingLeft: "20px" }}
             >
-            {singleProperty?.data?.yearsOld || "Unknown"} years old
+              Property Age:
+              <div style={{ fontWeight: 600 }}>{singleProperty?.data?.yearsOld || "Unknown"} years old</div>
+            </Typography>
+            <Typography
+              variant="h5"
+              color="textSecondary"
+              fontFamily={"Montserrat, Arial, sans-serif"}
+              sx={{ marginLeft: 2, borderLeft: "2px solid #00274D", paddingLeft: "20px" }}
+            >
+              Units:
+              <div style={{ fontWeight: 600 }}>{singleProperty?.data?.units || "Unknown"} Units</div>
             </Typography>
           </Box>
         </CardContent>

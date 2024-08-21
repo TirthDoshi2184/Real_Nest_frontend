@@ -9,7 +9,7 @@ import { BuyerDashboard } from "../components/Dashboard/BuyerDashboard";
 import AddProperty from "../components/Property/AddProperty";
 import  ListProperty  from "../components/Property/ListProperty";
 import PropertyDetail from "../components/Property/PropertyDetail";
-import { ContactOwner } from "../components/Property/ContactOwner";
+// import { ContactOwner } from "../components/Property/ContactOwner";
 
 
 const MainRouter = ({ children }) => {
@@ -33,11 +33,6 @@ const MainRouter = ({ children }) => {
       path: "/login",
       element: <UserLogin />,
       errorElement: <h1>Login Error 404</h1>,
-    },
-    {
-      path: "/cntowner",
-      element:<ContactOwner/>,
-      errorElement: <h1>Owner Error</h1>,
     },
     {
       path: "user",

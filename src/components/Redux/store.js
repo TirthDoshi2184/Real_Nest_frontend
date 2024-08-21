@@ -1,6 +1,6 @@
 // store.js
 import { configureStore } from '@reduxjs/toolkit';
-import cityReducer from './CityFilter';
+import cityReducer from './CitySlice';
 
 const store = configureStore({
   reducer: {

@@ -5,6 +5,10 @@ import './App.css'
 import MainRouter from './routers/Router'
 import { Provider } from 'react-redux'
 import store from './components/Redux/store'
+import { Navbar } from './components/BasicComponent/Navbar'
+import theme from './components/Theme'
+import { ThemeProvider } from '@mui/material'
+import Footer from './components/BasicComponent/Footer'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -12,7 +16,11 @@ function App() {
 
   return (
  <Provider  store={store}>
+     <ThemeProvider theme={theme}>
+    <Navbar/>
     <MainRouter/>
+    <Footer/>
+     </ThemeProvider>
  </Provider>
   )
 }

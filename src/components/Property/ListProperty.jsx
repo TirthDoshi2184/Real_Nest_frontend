@@ -1,33 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardContent, CardMedia, Typography, TextField, Box, Button, Select, MenuItem, styled } from '@mui/material';
+import { Grid, Card, CardContent, CardMedia, Typography, TextField, Box, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { setCities, setSelectedCity, fetchCities } from '../Redux/CityFilter';
-// import { setCities, setSelectedCity, fetchCities } from './CityFilter';
+import { changeCity } from '../Redux/CitySlice';
 
 const cardStyles = {
   root: {
-    maxWidth: 260,
+    maxWidth: 280,
     margin: 'auto',
     marginBottom: 20,
+    backgroundColor: '#F0F0F0', // Light Gray background
+    borderRadius: '12px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow
   },
   media: {
-    height: 140,
+    height: 160,
+    borderTopLeftRadius: '12px',
+    borderTopRightRadius: '12px',
   },
 };
 
 const ListProperty = () => {
   const [properties, setProperties] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const cities = useSelector((state) => state.city.cities);
-  const selectedCity = useSelector((state) => state.city.selectedCity);
+  const selectedCity = useSelector((state) => state.city.city);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    dispatch(fetchCities());
-  }, [dispatch]);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -42,17 +42,12 @@ const ListProperty = () => {
         console.error("Error fetching properties:", error);
       }
     };
-
     fetchProperties();
   }, [selectedCity]);
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
   const handleCityChange = (event) => {
     const selectedCity = event.target.value;
-    dispatch(setSelectedCity(selectedCity));
+    dispatch(changeCity(selectedCity));
   };
 
   const handleAddProperty = () => {
@@ -62,60 +57,52 @@ const ListProperty = () => {
   const handleLogin = () => {
     navigate("/login");
   };
-  const handleViewProperty = (propertyId) => {
-    navigate(`/pdetail/${propertyId}`);
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
+  const filteredProperties = properties.filter(property => {
+    const price = property?.price?.toString().toLowerCase() || '';
+    const type = property?.type?.toString().toLowerCase() || '';
+    const area = property?.location?.toString().toLowerCase() || '';
+    return (
+      price.includes(searchQuery.toLowerCase()) ||
+      type.includes(searchQuery.toLowerCase()) ||
+      area.includes(searchQuery.toLowerCase())
 
+    );
+  });
 
-
-
-  const filteredProperties = properties.filter(property =>
-    property?.society?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property?.price?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property?.user?.role
-  );
   return (
-    <div>
-      <Box sx={{ bgcolor: '#f0f0f0', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h6" component="div">
-          Company Name
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Select
-            value={selectedCity}
-            onChange={handleCityChange}
-            variant="outlined"
-            style={{ marginRight: 10 }}
-          >
-            <MenuItem value="">Select City</MenuItem>
-            {cities?.map((city) => (
-              <MenuItem key={city.id} value={city._id}>
-                {city.city}
-              </MenuItem>
-            ))}
-          </Select>
-          <Button variant="contained" color="primary" onClick={handleAddProperty} style={{ marginRight: 10 }}>
-            Add Property
-          </Button>
-          <Button variant="outlined" color="primary" onClick={handleLogin}>
-            Login
-          </Button>
-        </Box>
-      </Box>
-
+    <Box sx={{ padding: '20px', backgroundColor: '#F5F5F5' }}>
       <TextField
         label="Search Properties"
         variant="outlined"
         fullWidth
         value={searchQuery}
         onChange={handleSearchChange}
-        style={{ marginBottom: 20, marginTop: 10 }}
+        sx={{
+          marginBottom: 3,
+          backgroundColor: '#FFFFFF',
+          borderRadius: '8px',
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: '#00274D', // Navy Blue border
+            },
+            '&:hover fieldset': {
+              borderColor: '#00274D',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#00274D',
+            },
+          },
+        }}
       />
 
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         {filteredProperties.map((pr) => (
-          <Grid item xs={6} sm={4} md={3} lg={2} key={pr?._id}>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={pr?._id}>
             <Card style={cardStyles.root}>
               <CardMedia
                 style={cardStyles.media}
@@ -123,29 +110,37 @@ const ListProperty = () => {
                 title={pr?.society?.name || 'Property Image'}
               />
               <CardContent>
-                <Typography gutterBottom variant="h6" component="h2">
+                <Typography gutterBottom variant="h6" color="textPrimary" fontWeight={600}>
                   {pr?.type || 'Flat type'}
                 </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {pr?.price ? `Price: ${pr.price}` : 'Price not available'} ,
+                <Typography color="textSecondary" variant="body2" fontWeight={400}>
+                  {pr?.price ? `Price: ${pr.price}` : 'Price not available'}
+                  <br/>
                   {pr?.location}
                 </Typography>
-                <Typography>
-
-                </Typography><br />
-                {/* <Button variant="contained" color="success"  onClick={() => handleViewProperty(pr?._id)}>View Property</Button> */}
-                <Link to={`/pdetail/${pr?._id}`} style={{ textDecoration: 'none' }}>
-                  <button style={{  padding:'5px 5px',borderRadius:"3px",fontSize: '16px', cursor: 'pointer',color:'white',backgroundColor:'green',border:'none' }}>
-                    Detail
-                  </button>
-                </Link>
+                <Box mt={2}>
+                  <Link to={`/pdetail/${pr?._id}`} style={{ textDecoration: 'none' }}>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      sx={{
+                        backgroundColor: '#D4AF37', // Gold color
+                        color: '#FFFFFF',
+                        '&:hover': {
+                          backgroundColor: '#B68F29', // Darker gold on hover
+                        },
+                      }}
+                    >
+                      View Details
+                    </Button>
+                  </Link>
+                </Box>
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
-    </div>
-    
+    </Box>
   );
 };
 
