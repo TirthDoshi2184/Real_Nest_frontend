@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from 'react-bootstrap';
+import BuildingIcon from '@mui/icons-material/Apartment';
 
 
 {
@@ -155,7 +156,7 @@ const PropertyDetail = () => {
 
       </Box> */}
 
-      <Card>
+      <Card></Card>
         {/* Displaying property image */}
         {/* <CardMedia
             component="img"
@@ -303,6 +304,7 @@ const PropertyDetail = () => {
         </CardContent>
       </Card>
     </Box>
+      
 )}
 
 export default PropertyDetail;
