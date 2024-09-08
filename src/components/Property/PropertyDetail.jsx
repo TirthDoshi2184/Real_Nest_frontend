@@ -1,22 +1,31 @@
-import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Typography,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CircularProgress,
-  Divider,
-  Box,
-  CardActions,
-  Button,
-} from "@mui/material";
-import { styled } from "@mui/system";
-import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Container, Typography, Grid, Card, CardMedia, CardContent, CircularProgress, Divider, Box, CardActions, Button } from '@mui/material';
+import { styled } from '@mui/system';
+import axios from 'axios';
+import { Link, useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Modal } from 'react-bootstrap';
 import BuildingIcon from '@mui/icons-material/Apartment';
-import { Modal } from "react-bootstrap";
+
+
+{
+  /* The following line can be included in your src/index.js or App.js file */
+}
+
+
+// Styled Card for Property Details
+const PropertyCard = styled(Card)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[5],
+  marginBottom: theme.spacing(4),
+}));
+
+// Styled Image Gallery Container
+const ImageGalleryContainer = styled(Box)(({ theme }) => ({
+  marginBottom: theme.spacing(4),
+}));
 
 // Styled Grid for Image Gallery
 const ImageGallery = styled(Grid)(({ theme }) => ({
@@ -70,9 +79,7 @@ const PropertyDetail = () => {
   if (error) {
     return <div>Error fetching data: {error.message}</div>;
   }
-
   const { images = [] } = singleflat?.data || {};
-
   return (
     <Box
       sx={{
@@ -91,6 +98,7 @@ const PropertyDetail = () => {
           backgroundColor: "#FFFFFF", // White card background
         }}
       >
+<<<<<<< HEAD
         <Grid container>
           <Grid item xs={12} md={6}>
             <CardMedia
@@ -173,6 +181,74 @@ const PropertyDetail = () => {
       >
         <CardContent>
           <Typography variant="h3" component="div" fontFamily={"Montserrat, Arial, sans-serif"} sx={{ color: "#00274D" }}>
+=======
+        {singleflat?.data?.society?.name || "Property Name"}
+      </Typography>
+      <Typography
+        variant="h4"
+        color="textSecondary"
+        gutterBottom
+        align="center"
+        fontFamily={"monospace"}
+      >
+        ${singleflat?.data?.price || "Price"} - All inclusive
+      </Typography>
+
+      {/* Image Gallery */}
+      {/* <ImageGalleryContainer>
+        <Grid container spacing={2}>
+          <ImageGalleryItem item xs={12}>
+            <PropertyCard>
+              <CardMedia
+                component="img"
+                height="200"
+                image={singleProperty?.data?.imgUrl} // Assuming `image` has `imgUrl` property
+                alt="Property image"
+              />
+              <CardContent>
+                <Typography variant="body2" color="textSecondary">
+                  Image
+                </Typography>
+              </CardContent>
+            </PropertyCard>
+          </ImageGalleryItem>
+        </Grid>
+      </ImageGalleryContainer> */}
+      {/* Property Description */}
+
+
+      {/* Contact Information */}
+      <Divider />
+      {/* <Box marginY={4}>
+        <Typography variant="h3" gutterBottom fontFamily={'inherit'}>
+          Contact Information
+        </Typography>
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          Owner Name: {singleflat?.data?.user?.fullname || 'No contact name available'}
+        </Typography>
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          Contact No: {singleflat?.data?.user?.mobileNo || 'No contact email available'}
+        </Typography>
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          Role: {singleflat?.data?.user?.role || 'No contact phone available'}
+        </Typography>
+        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
+          {singleflat?.data?.location} , {singleflat?.data?.interiorType}
+        </Typography>
+
+      </Box> */}
+
+      <Card></Card>
+        {/* Displaying property image */}
+        {/* <CardMedia
+            component="img"
+            height="200"
+            image={singleProperty?.data?.data?.imgUrl} // Assuming `image` has `
+            /> */}
+        <Divider />
+        <CardContent>
+          <Typography variant="h3" component="div" fontFamily={'inherit'} >
+>>>>>>> 09acf18a6f587d6b15934f0ed8c5536fb9f0f6c7
             More Details
           </Typography>
           <Divider sx={{ marginY: 2, backgroundColor: "#D4AF37" }} /> {/* Gold divider */}
@@ -248,6 +324,7 @@ const PropertyDetail = () => {
           >
             Garden Area: {singleflat?.data?.society?.gardenArea} sqft
           </Typography>
+<<<<<<< HEAD
           <CardActions>
             <Button
               style={{
@@ -263,6 +340,31 @@ const PropertyDetail = () => {
               onClick={handleShow}
             >
               Contact Owner
+=======
+        </CardContent>
+
+        <CardActions>
+          {/* <Link to={`/cntowner`} style={{ textDecoration: 'none' }}> */}
+          {/* <button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} className='brn btn-success'>
+              Contact Owner
+            </button> */}
+
+
+          <Button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} onClick={handleShow}>
+            Contact Owner
+          </Button>
+
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Owner Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>OWNER NAME : {singleflat.data?.user?.fullname || "No Name Available"}</Modal.Body>
+            <Modal.Body>Contact No: {singleflat?.data?.user?.mobileNo || "No Contact Available"}</Modal.Body>
+            <Modal.Body>Area : {singleflat?.data?.location} , {singleflat?.data?.interiorType}</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Contact 
+>>>>>>> 09acf18a6f587d6b15934f0ed8c5536fb9f0f6c7
             </Button>
 
             <Modal show={show} onHide={handleClose}>
@@ -346,7 +448,7 @@ const PropertyDetail = () => {
         </CardContent>
       </Card>
     </Box>
-  );
-};
+      
+)}
 
 export default PropertyDetail;

@@ -9,7 +9,12 @@ import { BuyerDashboard } from "../components/Dashboard/BuyerDashboard";
 import AddProperty from "../components/Property/AddProperty";
 import  ListProperty  from "../components/Property/ListProperty";
 import PropertyDetail from "../components/Property/PropertyDetail";
+<<<<<<< HEAD
 // import { ContactOwner } from "../components/Property/ContactOwner";
+=======
+import { ContactOwner } from "../components/Property/ContactOwner";
+import { Amenities } from "../components/Amenities";
+>>>>>>> 09acf18a6f587d6b15934f0ed8c5536fb9f0f6c7
 
 
 const MainRouter = ({ children }) => {
@@ -17,24 +22,37 @@ const MainRouter = ({ children }) => {
     {
       path: "/signup",
       element: <UserSignup />,
-      errorElement: <h1>Login Error 404</h1>
+      errorElement: <h1>UserSignin Error 404</h1>
     },
     {
       path: "/",
       element:<ListProperty/>,
-      errorElement:<h1>404</h1>
+      errorElement:<h1>List Property 404</h1>
     },
     {
       path: "/pdetail/:id",
       element: <PropertyDetail />,
-      errorElement: <h1>Login Error 404</h1>
+      errorElement: <h1>PropertyDetail Error 404</h1>
     },
     {
       path: "/login",
       element: <UserLogin />,
-      errorElement: <h1>Login Error 404</h1>,
+      errorElement: <h1>UserLogin Error 404</h1>,
     },
     {
+<<<<<<< HEAD
+=======
+      path: "/cntowner",
+      element:<ContactOwner/>,
+      errorElement: <h1>Owner Error</h1>,
+    },
+    {
+      path: "/amenities",
+      element:<Amenities/>,
+      errorElement: <h1>Ameniites  Error</h1>,
+    },
+    {
+>>>>>>> 09acf18a6f587d6b15934f0ed8c5536fb9f0f6c7
       path: "user",
       element: <UserSideBar />,
       errorElement: <h1>404</h1>,

@@ -118,30 +118,38 @@ const ListProperty = () => {
                   <br/>
                   {pr?.location}
                 </Typography>
-                <Box mt={2}>
-                  <Link to={`/pdetail/${pr?._id}`} style={{ textDecoration: 'none' }}>
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      sx={{
-                        backgroundColor: '#D4AF37', // Gold color
-                        color: '#FFFFFF',
-                        '&:hover': {
-                          backgroundColor: '#B68F29', // Darker gold on hover
-                        },
-                      }}
-                    >
-                      View Details
-                    </Button>
-                  </Link>
-                </Box>
+                <Typography>
+
+                </Typography><br />
+                {/* <Button variant="contained" color="success"  onClick={() => handleViewProperty(pr?._id)}>View Property</Button> */}
+                <Link to={`/pdetail/${pr?._id}`} style={{ textDecoration: 'none' }}>
+                  <button style={{  padding:'5px 5px',borderRadius:"3px",fontSize: '16px', cursor: 'pointer',color:'white',backgroundColor:'green',border:'none' }}>
+                    Detail
+                  </button>
+                </Link>
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
-    </Box>
+    </div>
+    
   );
 };
 
 export default ListProperty;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
