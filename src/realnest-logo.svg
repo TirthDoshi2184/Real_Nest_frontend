@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  {/* Gradient Background */}
+  <defs>
+    <linearGradient id="homeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2196F3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1976D2;stop-opacity:1" />
+    </linearGradient>
+    
+    <clipPath id="nestClip">
+      <path d="M50 150 L150 50 L250 150 Q250 250 150 250 Q50 250 50 150Z" />
+    </clipPath>
+  </defs>
+  
+  {/* Main Background Shape */}
+  <path 
+    d="M50 150 L150 50 L250 150 Q250 250 150 250 Q50 250 50 150Z" 
+    fill="url(#homeGradient)"
+  />
+  
+  {/* Abstract Nest/Home Layers */}
+  <path 
+    d="M75 150 L150 75 L225 150 Q220 220 150 220 Q80 220 75 150Z" 
+    fill="rgba(255,255,255,0.2)"
+  />
+  
+  {/* Inner Home Structure */}
+  <path 
+    d="M100 150 L150 100 L200 150 Q195 200 150 200 Q105 200 100 150Z" 
+    fill="rgba(255,255,255,0.3)"
+  />
+  
+  {/* Roof Peak */}
+  <polygon 
+    points="50,150 150,50 250,150" 
+    fill="rgba(255,255,255,0.4)"
+  />
+  
+  {/* Subtle Nest Texture */}
+  <path 
+    d="M75 180 Q110 160 150 180 Q190 200 225 180" 
+    fill="none" 
+    stroke="white" 
+    strokeWidth="4" 
+    strokeDasharray="10,10" 
+    opacity="0.5"
+  />
+</svg>

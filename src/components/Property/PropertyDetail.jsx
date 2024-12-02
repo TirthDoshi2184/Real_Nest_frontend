@@ -1,63 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Grid, Card, CardMedia, CardContent, CircularProgress, Divider, Box, CardActions, Button } from '@mui/material';
-import { styled } from '@mui/system';
-import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal } from 'react-bootstrap';
-import BuildingIcon from '@mui/icons-material/Apartment';
-// Styled Card for Property Details
-const PropertyCard = styled(Card)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[5],
-  marginBottom: theme.spacing(4),
-}));
-
-// Styled Image Gallery Container
-const ImageGalleryContainer = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(4),
-}));
-
-// Styled Grid for Image Gallery
-const ImageGallery = styled(Grid)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-}));
+import axios from 'axios';
+import {
+  ArrowLeft,
+  Building2,
+  MapPin,
+  Phone,
+  Mail,
+  ParkingSquare,
+  Trees,
+  Home,
+  Calendar,
+  DollarSign,
+  Sparkles
+} from 'lucide-react';
 
 const PropertyDetail = () => {
-  const bodyStyle = {
-    backgroundColor: "#F5F5F5", // Background color consistent with theme
-  };
-
-  useEffect(() => {
-    document.body.style.backgroundColor = bodyStyle.backgroundColor;
-  }, [bodyStyle.backgroundColor]);
-
-  const id = useParams().id;
-  const [singleProperty, setSingleProperty] = useState({});
-  const [singleflat, setsingleflat] = useState({});
+  const { id } = useParams();
+  const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const societyResponse = await axios.get(
-          "http://localhost:3000/society/singlesociety/" + id
-        );
-        setSingleProperty(societyResponse.data);
-
-        const flatResponse = await axios.get(
-          `http://localhost:3000/flat/singleflat/${id}`
-        );
-        setsingleflat(flatResponse.data);
-      } catch (err) {
-        setError(err);
+        const [societyRes, flatRes] = await Promise.all([
+          axios.get(`http://localhost:3000/society/singlesociety/${id}`),
+          axios.get(`http://localhost:3000/flat/singleflat/${id}`)
+        ]);
+        setProperty({
+          society: societyRes.data,
+          flat: flatRes.data.data
+        });
+      } catch (error) {
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -66,351 +42,159 @@ const PropertyDetail = () => {
   }, [id]);
 
   if (loading) {
-    return <CircularProgress />;
-  }
-
-  if (error) {
-    return <div>Error fetching data: {error.message}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-16 h-16 border-4 border-t-blue-600 rounded-full animate-spin" />
+      </div>
+    );
   }
 
   return (
-    <Box
-    sx={{
-      marginLeft: "10%",
-      width: "100%",
-      maxWidth: "1552px",
-    }}>
-      <Card
-        sx={{
-          border: "2px solid #e0e0e0",
-          borderRadius: "15px",
-          marginTop: 2,
-          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
-          overflow: "hidden",
-          backgroundColor: "#FFFFFF", // White card background
-        }}
-      >
-        <Grid container>
-          <Grid item xs={12} md={6}>
-            <CardMedia
-              component="img"
-              image={singleflat?.data?.imgUrl || "https://via.placeholder.com/400"}
-              alt={singleflat?.data?.society?.name || "Property Image"}
-              sx={{
-                objectFit: "cover",
-                height: "100%",
-                maxHeight: "400px",
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <CardContent
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                padding: 4,
-              }}
-            >
-              <Typography
-                variant="h3"
-                gutterBottom
-                align="left"
-                fontFamily={"Montserrat, Arial, sans-serif"}
-                sx={{ color: "#00274D" }} // Navy Blue text
-              >
-                {singleflat?.data?.society?.name || "Property Name"}
-              </Typography>
-              <Typography
-                variant="h5"
-                color="textSecondary"
-                gutterBottom
-                align="left"
-                fontFamily={"Montserrat, Arial, sans-serif"}
-              >
-                ${singleflat?.data?.price || "Price"} - All inclusive
-              </Typography>
-              <Typography
-                variant="body1"
-                color="textSecondary"
-                align="left"
-                fontFamily={"Montserrat, Arial, sans-serif"}
-                sx={{ marginTop: 2 }}
-              >
-                Prime Location: {singleflat?.data?.location}
-              </Typography>
-              <Typography
-                variant="body1"
-                color="textSecondary"
-                align="left"
-                fontFamily={"Montserrat, Arial, sans-serif"}
-              >
-                Furnishing: {singleflat?.data?.interiorType}
-              </Typography>
-              <Typography
-                variant="body1"
-                color="textSecondary"
-                align="left"
-                fontFamily={"Montserrat, Arial, sans-serif"}
-              >
-                Status: {singleflat?.data?.status}
-              </Typography>
-            </CardContent>
-          </Grid>
-        </Grid>
-      </Card>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header Section */}
+        <div className="mb-8">
+          <Link to="/properties" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to Properties
+          </Link>
+        </div>
 
-      <Card
-        sx={{
-          border: "2px solid #e0e0e0",
-          borderRadius: "15px",
-          marginTop: 2,
-          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
-          overflow: "hidden",
-          backgroundColor: "#FFFFFF", // White card background
-        }}
-      >
-          <Typography variant="h3" component="div" fontFamily={"Montserrat, Arial, sans-serif"} sx={{ color: "#00274D" }}>
-        {singleflat?.data?.society?.name || "Property Name"}
-      </Typography>
-      <Typography
-        variant="h4"
-        color="textSecondary"
-        gutterBottom
-        align="center"
-        fontFamily={"monospace"}
-      >
-        ${singleflat?.data?.price || "Price"} - All inclusive
-      </Typography>
-
-      {/* Image Gallery */}
-      {/* <ImageGalleryContainer>
-        <Grid container spacing={2}>
-          <ImageGalleryItem item xs={12}>
-            <PropertyCard>
-              <CardMedia
-                component="img"
-                height="200"
-                image={singleProperty?.data?.imgUrl} // Assuming `image` has `imgUrl` property
-                alt="Property image"
+        {/* Hero Section */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="relative h-96">
+              <img 
+                src={property?.flat?.imgUrl || "/api/placeholder/800/600"} 
+                alt={property?.flat?.society?.name}
+                className="w-full h-full object-cover"
               />
-              <CardContent>
-                <Typography variant="body2" color="textSecondary">
-                  Image
-                </Typography>
-              </CardContent>
-            </PropertyCard>
-          </ImageGalleryItem>
-        </Grid>
-      </ImageGalleryContainer> */}
-      {/* Property Description */}
+              <div className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-full">
+                {property?.flat?.status}
+              </div>
+            </div>
+            <div className="p-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">{property?.flat?.society?.name}</h1>
+              <div className="flex items-center mb-6">
+                <MapPin className="w-5 h-5 text-blue-600 mr-2" />
+                <p className="text-gray-600">{property?.flat?.location}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-6 mb-8">
+                <div className="flex items-center">
+                  <DollarSign className="w-5 h-5 text-blue-600 mr-2" />
+                  <div>
+                    <p className="text-sm text-gray-500">Price</p>
+                    <p className="text-lg font-semibold">${property?.flat?.price}</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Sparkles className="w-5 h-5 text-blue-600 mr-2" />
+                  <div>
+                    <p className="text-sm text-gray-500">Interior</p>
+                    <p className="text-lg font-semibold">{property?.flat?.interiorType}</p>
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Contact Owner
+              </button>
+            </div>
+          </div>
+        </div>
 
+        {/* Property Details */}
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <div className="bg-white p-6 rounded-xl shadow-lg">
+            <h2 className="text-xl font-semibold mb-6">Property Features</h2>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex items-center">
+                <Building2 className="w-5 h-5 text-blue-600 mr-3" />
+                <div>
+                  <p className="text-sm text-gray-500">Floors</p>
+                  <p className="font-medium">{property?.flat?.society?.floors}</p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <Calendar className="w-5 h-5 text-blue-600 mr-3" />
+                <div>
+                  <p className="text-sm text-gray-500">Age</p>
+                  <p className="font-medium">{property?.society?.yearsOld} years</p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <ParkingSquare className="w-5 h-5 text-blue-600 mr-3" />
+                <div>
+                  <p className="text-sm text-gray-500">Parking</p>
+                  <p className="font-medium">{property?.flat?.society?.parkingArea} sqft</p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <Trees className="w-5 h-5 text-blue-600 mr-3" />
+                <div>
+                  <p className="text-sm text-gray-500">Garden</p>
+                  <p className="font-medium">{property?.flat?.society?.gardenArea} sqft</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-lg">
+            <h2 className="text-xl font-semibold mb-6">Construction Status</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Status</span>
+                <span className="font-medium">{property?.flat?.society?.constructionStatus}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Total Units</span>
+                <span className="font-medium">{property?.society?.units}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      {/* Contact Information */}
-      <Divider />
-      {/* <Box marginY={4}>
-        <Typography variant="h3" gutterBottom fontFamily={'inherit'}>
-          Contact Information
-        </Typography>
-        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
-          Owner Name: {singleflat?.data?.user?.fullname || 'No contact name available'}
-        </Typography>
-        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
-          Contact No: {singleflat?.data?.user?.mobileNo || 'No contact email available'}
-        </Typography>
-        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
-          Role: {singleflat?.data?.user?.role || 'No contact phone available'}
-        </Typography>
-        <Typography variant="h5" color="textSecondary" paragraph fontFamily={'monospace'}>
-          {singleflat?.data?.location} , {singleflat?.data?.interiorType}
-        </Typography>
-
-      </Box> */}
-
-      <Card></Card>
-        {/* Displaying property image */}
-        {/* <CardMedia
-            component="img"
-            height="200"
-            image={singleProperty?.data?.data?.imgUrl} // Assuming `image` has `
-            /> */}
-        <Divider />
-        <CardContent>
-          <Typography variant="h3" component="div" fontFamily={'inherit'} >
-            More Details
-          </Typography>
-          <Divider sx={{ marginY: 2, backgroundColor: "#D4AF37" }} /> {/* Gold divider */}
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            paragraph
-            fontFamily={"Montserrat, Arial, sans-serif"}
-          >
-            Price Breakup: {singleflat?.data?.price}
-          </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"Montserrat, Arial, sans-serif"}
-          >
-            Prime Location: {singleflat?.data?.location}
-          </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"Montserrat, Arial, sans-serif"}
-          >
-            Furnishing: {singleflat?.data?.interiorType}
-          </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"Montserrat, Arial, sans-serif"}
-          >
-            Status: {singleflat?.data?.status}
-          </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"Montserrat, Arial, sans-serif"}
-          >
-            No of Floors: {singleflat?.data?.society?.floors}
-          </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"Montserrat, Arial, sans-serif"}
-          >
-            Construction Status: {singleflat?.data?.society?.constructionStatus}
-          </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"Montserrat, Arial, sans-serif"}
-          >
-            Property Age: {singleProperty?.data?.yearsOld} years
-          </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"Montserrat, Arial, sans-serif"}
-          >
-            Parking Area: {singleflat?.data?.society?.parkingArea}
-          </Typography>
-          <Typography
-            variant="h5"
-            color="textSecondary"
-            marginTop={2}
-            fontFamily={"Montserrat, Arial, sans-serif"}
-          >
-            Garden Area: {singleflat?.data?.society?.gardenArea} sqft
-          </Typography>
-          <CardActions>
-            <Button
-              style={{
-                padding: '10px 10px',
-                marginLeft: '.7rem',
-                borderRadius: "3px",
-                fontSize: '16px',
-                cursor: 'pointer',
-                color: 'white',
-                backgroundColor: '#00274D', // Navy Blue button
-                border: 'none',
-              }}
-              onClick={handleShow}
-            >
-              Contact Owner
-            </Button>
-
-            <Modal show={show} onHide={handleClose}>
-              <Modal.Header closeButton  style={{
-                        backgroundColor: '#00274D', // Navy Blue header
-                        borderBottom: '2px solid #D4AF37', // Gold border at the bottom
-                        color: '#FFFFFF', // White text
-                    }}>
-                <Modal.Title>Owner Details</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>OWNER NAME: {singleflat.data?.user?.fullname || "No Name Available"}</Modal.Body>
-              <Modal.Body>Contact No: {singleflat?.data?.user?.mobileNo || "No Contact Available"}</Modal.Body>
-              <Modal.Body>Area: {singleflat?.data?.location} , {singleflat?.data?.interiorType}</Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}  style={{
-                            backgroundColor: '#D4AF37', // Gold background
-                            borderColor: '#D4AF37', // Gold border
-                            color: '#00274D', // Navy Blue text
-                            fontFamily: 'Montserrat, Arial, sans-serif',
-                        }}>
-                  Contact
-                </Button>
-                <Button variant="primary" onClick={handleClose}  style={{
-                            backgroundColor: '#00274D', // Navy Blue background
-                            borderColor: '#00274D', // Navy Blue border
-                            color: '#FFFFFF', // White text
-                            fontFamily: 'Montserrat, Arial, sans-serif',
-                        }}>
+        {/* Contact Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full">
+              <h3 className="text-xl font-semibold mb-4">Contact Owner</h3>
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center">
+                  <Phone className="w-5 h-5 text-blue-600 mr-3" />
+                  <div>
+                    <p className="text-sm text-gray-500">Phone</p>
+                    <p className="font-medium">{property?.flat?.user?.mobileNo}</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Home className="w-5 h-5 text-blue-600 mr-3" />
+                  <div>
+                    <p className="text-sm text-gray-500">Location</p>
+                    <p className="font-medium">{property?.flat?.location}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-4">
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                >
                   Close
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </CardActions>
-        </CardContent>
-      </Card>
-
-      <Card
-        sx={{
-          border: "2px solid #e0e0e0",
-          borderRadius: "15px",
-          marginTop: 2,
-          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
-          overflow: "hidden",
-          backgroundColor: "#FFFFFF", // White card background
-        }}
-      >
-        <CardContent>
-          <Typography variant="h3" component="div" fontFamily={"Montserrat, Arial, sans-serif"} sx={{ color: "#00274D" }}>
-            About Project
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
-            <BuildingIcon sx={{ marginRight: 1, color: "#D4AF37" }} /> {/* Gold icon */}
-            <Link
-              href={`/society/${singleflat?.data?.society?.id}`}
-              variant="h5"
-              color="primary"
-              fontFamily={"Montserrat, Arial, sans-serif"}
-              underline="hover"
-            >
-              {singleflat?.data?.society?.name || "Society Name"}
-            </Link>
-            <Typography
-              variant="h5"
-              color="textSecondary"
-              fontFamily={"Montserrat, Arial, sans-serif"}
-              sx={{ marginLeft: 2, borderLeft: "2px solid #00274D", paddingLeft: "20px" }}
-            >
-              Property Age:
-              <div style={{ fontWeight: 600 }}>{singleProperty?.data?.yearsOld || "Unknown"} years old</div>
-            </Typography>
-            <Typography
-              variant="h5"
-              color="textSecondary"
-              fontFamily={"Montserrat, Arial, sans-serif"}
-              sx={{ marginLeft: 2, borderLeft: "2px solid #00274D", paddingLeft: "20px" }}
-            >
-              Units:
-              <div style={{ fontWeight: 600 }}>{singleProperty?.data?.units || "Unknown"} Units</div>
-            </Typography>
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
-      
-)}
+                </button>
+                <button 
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Contact Now
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default PropertyDetail;
