@@ -36,30 +36,31 @@ export default function UserLogin() {
   const { register, handleSubmit } = useForm();
 
   const submithandle = async (data) => {
-    var userObj = Object.assign({}, data);
-    setuser(data);
-    console.log("=====================>", data);
-    const userDetails = await axios.post("http://localhost:3000/user/login", userObj);
-    console.log("userdetIL", userDetails.data);
-    console.log("DATA..", userDetails.data.user);
-    console.log(data);
-    if (userDetails.status === 200) {
-      console.log(".........", userDetails.data.user.role);
-      switch (userDetails.data.user.role) {
-        case "Seller":
-          sessionStorage.setItem("id", userDetails?.data?.user?._id);
-          console.log("Data:---", data);
-          navigate("/user/sellerdashboard");
-          break;
-        case "Buyer":
-          sessionStorage.setItem("id", userDetails?.data.user?._id);
-          console.log("Data:---", data);
-          navigate("/user/buyerdashboard");
-          break;
-        default:
+    try {
+      const userObj = Object.assign({}, data);
+      const userDetails = await axios.post("http://localhost:3000/user/login", userObj);
+  
+      if (userDetails.status === 200) {
+        sessionStorage.setItem("id", userDetails.data.user._id); // Save user ID to session storage
+        switch (userDetails.data.user.role) {
+          case "Seller":
+            navigate("/user/sellerdashboard");
+            break;
+          case "Buyer":
+            navigate("/user/buyerdashboard");
+            break;
+          case "Admin":
+            navigate("/user/admindashboard");
+            break;
+          default:
+            break;
+        }
       }
+    } catch (error) {
+      console.error("Login failed:", error);
     }
-  }
+  };
+  
 
   return (
     <ThemeProvider theme={defaultTheme}>

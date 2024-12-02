@@ -6,13 +6,6 @@ import { Link, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from 'react-bootstrap';
 import BuildingIcon from '@mui/icons-material/Apartment';
-
-
-{
-  /* The following line can be included in your src/index.js or App.js file */
-}
-
-
 // Styled Card for Property Details
 const PropertyCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -79,15 +72,14 @@ const PropertyDetail = () => {
   if (error) {
     return <div>Error fetching data: {error.message}</div>;
   }
-  const { images = [] } = singleflat?.data || {};
+
   return (
     <Box
-      sx={{
-        marginLeft: "10%",
-        width: "100%",
-        maxWidth: "1552px",
-      }}
-    >
+    sx={{
+      marginLeft: "10%",
+      width: "100%",
+      maxWidth: "1552px",
+    }}>
       <Card
         sx={{
           border: "2px solid #e0e0e0",
@@ -98,7 +90,6 @@ const PropertyDetail = () => {
           backgroundColor: "#FFFFFF", // White card background
         }}
       >
-<<<<<<< HEAD
         <Grid container>
           <Grid item xs={12} md={6}>
             <CardMedia
@@ -179,9 +170,7 @@ const PropertyDetail = () => {
           backgroundColor: "#FFFFFF", // White card background
         }}
       >
-        <CardContent>
           <Typography variant="h3" component="div" fontFamily={"Montserrat, Arial, sans-serif"} sx={{ color: "#00274D" }}>
-=======
         {singleflat?.data?.society?.name || "Property Name"}
       </Typography>
       <Typography
@@ -248,7 +237,6 @@ const PropertyDetail = () => {
         <Divider />
         <CardContent>
           <Typography variant="h3" component="div" fontFamily={'inherit'} >
->>>>>>> 09acf18a6f587d6b15934f0ed8c5536fb9f0f6c7
             More Details
           </Typography>
           <Divider sx={{ marginY: 2, backgroundColor: "#D4AF37" }} /> {/* Gold divider */}
@@ -324,7 +312,6 @@ const PropertyDetail = () => {
           >
             Garden Area: {singleflat?.data?.society?.gardenArea} sqft
           </Typography>
-<<<<<<< HEAD
           <CardActions>
             <Button
               style={{
@@ -340,31 +327,6 @@ const PropertyDetail = () => {
               onClick={handleShow}
             >
               Contact Owner
-=======
-        </CardContent>
-
-        <CardActions>
-          {/* <Link to={`/cntowner`} style={{ textDecoration: 'none' }}> */}
-          {/* <button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} className='brn btn-success'>
-              Contact Owner
-            </button> */}
-
-
-          <Button style={{ padding: '10px 10px', marginLeft: '.7rem', borderRadius: "3px", fontSize: '16px', cursor: 'pointer', color: 'white', backgroundColor: 'blue', border: 'none' }} onClick={handleShow}>
-            Contact Owner
-          </Button>
-
-          <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Owner Details</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>OWNER NAME : {singleflat.data?.user?.fullname || "No Name Available"}</Modal.Body>
-            <Modal.Body>Contact No: {singleflat?.data?.user?.mobileNo || "No Contact Available"}</Modal.Body>
-            <Modal.Body>Area : {singleflat?.data?.location} , {singleflat?.data?.interiorType}</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Contact 
->>>>>>> 09acf18a6f587d6b15934f0ed8c5536fb9f0f6c7
             </Button>
 
             <Modal show={show} onHide={handleClose}>

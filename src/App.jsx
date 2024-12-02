@@ -19,7 +19,7 @@ function App() {
      <ThemeProvider theme={theme}>
     <Navbar/>
     <MainRouter/>
-    <Footer/>
+    {/* <Footer/> */}
      </ThemeProvider>
  </Provider>
   )

@@ -130,7 +130,7 @@ export default function UserSignup() {
               >
                 <MenuItem value={"Buyer"} >Buyer</MenuItem>
                 <MenuItem value={"Seller"}>Seller</MenuItem>
-          
+                <MenuItem value={"Admin"}>Admin</MenuItem>
               </Select>
             </Grid>
               <Grid item xs={12}>

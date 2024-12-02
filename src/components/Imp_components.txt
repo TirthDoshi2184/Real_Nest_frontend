@@ -1,0 +1,158 @@
+                        Home page slider for the property
+   
+   
+      {/* Properties Slider */}
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          py: 4, 
+          width: '100%', 
+          overflowX: 'hidden' 
+        }}
+      >
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            mb: 3 
+          }}
+        >
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>
+            Top Searched Properties
+          </Typography>
+          <Box>
+            <IconButton onClick={prevSlide} color="primary">
+              <ArrowBackIcon />
+            </IconButton>
+            <IconButton onClick={nextSlide} color="primary">
+              <ArrowForwardIcon />
+            </IconButton>
+          </Box>
+        </Box>
+
+        {/* Responsive Property Grid */}
+        <Grid 
+          container 
+          spacing={2} 
+          sx={{ 
+            width: '100%',
+            overflowX: 'auto' 
+          }}
+        >
+          {properties.slice(currentSlide, currentSlide + itemsPerSlide).map((property) => (
+            <Grid 
+              item 
+              xs={12} 
+              sm={6} 
+              md={4} 
+              key={property.id}
+              sx={{ width: '100%' }}
+            >
+              <Card 
+                sx={{ 
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'transform 0.3s',
+                  '&:hover': { transform: 'scale(1.05)' } 
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="240"
+                  image={property.imgUrl}
+                  alt={property.address}
+                  sx={{ 
+                    height: { xs: '200px', md: '240px' },
+                    objectFit: 'cover' 
+                  }}
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h6" color="text.primary">
+                    {property.address}
+                  </Typography>
+                  <Typography variant="body1" color="secondary.main">
+                    {property.price}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+
+                            
+                            
+                            
+                            Home Page Footer
+
+   {/* Services Section */}
+      <Box sx={{ backgroundColor: 'background.paper', py: 8 }}>
+        <Container>
+          <Typography variant="h4" align="center" sx={{ mb: 4, fontWeight: 700 }}>
+            Our Services
+          </Typography>
+          <Grid container spacing={4}>
+            {[
+              { 
+                icon: "🏡", 
+                title: "Buy a Home", 
+                description: "Browse our extensive listings and find your perfect home." 
+              },
+              { 
+                icon: "🔑", 
+                title: "Rent a Property", 
+                description: "Find the ideal rental that suits your lifestyle and budget." 
+              },
+              { 
+                icon: "💰", 
+                title: "Sell Your Home", 
+                description: "Get the best value for your property with our expert guidance." 
+              }
+            ].map((service, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <Card 
+                  sx={{ 
+                    p: 3, 
+                    textAlign: 'center',
+                    transition: 'box-shadow 0.3s',
+                    '&:hover': { boxShadow: 3 } 
+                  }}
+                >
+                  <Typography variant="h2" sx={{ mb: 2 }}>
+                    {service.icon}
+                  </Typography>
+                  <Typography variant="h6" sx={{ mb: 2 }}>
+                    {service.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {service.description}
+                  </Typography>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Testimonial Section */}
+      <Container sx={{ py: 8, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ mb: 4, fontWeight: 700 }}>
+          What Our Clients Say
+        </Typography>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            maxWidth: 'md', 
+            mx: 'auto', 
+            mb: 2, 
+            fontStyle: 'italic',
+            color: 'text.secondary'
+          }}
+        >
+          "An incredible platform that made finding my dream home easier than ever!"
+        </Typography>
+        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+          - Jane Doe, Happy Homeowner
+        </Typography>

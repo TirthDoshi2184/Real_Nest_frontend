@@ -9,12 +9,9 @@ import { BuyerDashboard } from "../components/Dashboard/BuyerDashboard";
 import AddProperty from "../components/Property/AddProperty";
 import  ListProperty  from "../components/Property/ListProperty";
 import PropertyDetail from "../components/Property/PropertyDetail";
-<<<<<<< HEAD
+import HomePage from "../components/Main_pages/Home";
 // import { ContactOwner } from "../components/Property/ContactOwner";
-=======
-import { ContactOwner } from "../components/Property/ContactOwner";
-import { Amenities } from "../components/Amenities";
->>>>>>> 09acf18a6f587d6b15934f0ed8c5536fb9f0f6c7
+import {AdminDashboard} from "../components/Dashboard/AdminDashboard";
 
 
 const MainRouter = ({ children }) => {
@@ -25,7 +22,7 @@ const MainRouter = ({ children }) => {
       errorElement: <h1>UserSignin Error 404</h1>
     },
     {
-      path: "/",
+      path: "/listproperty",
       element:<ListProperty/>,
       errorElement:<h1>List Property 404</h1>
     },
@@ -40,19 +37,11 @@ const MainRouter = ({ children }) => {
       errorElement: <h1>UserLogin Error 404</h1>,
     },
     {
-<<<<<<< HEAD
-=======
-      path: "/cntowner",
-      element:<ContactOwner/>,
-      errorElement: <h1>Owner Error</h1>,
+      path:"/",
+      element:<HomePage/>,
+      errorElement: <h1>Home page not found</h1>
     },
     {
-      path: "/amenities",
-      element:<Amenities/>,
-      errorElement: <h1>Ameniites  Error</h1>,
-    },
-    {
->>>>>>> 09acf18a6f587d6b15934f0ed8c5536fb9f0f6c7
       path: "user",
       element: <UserSideBar />,
       errorElement: <h1>404</h1>,
@@ -75,6 +64,11 @@ const MainRouter = ({ children }) => {
         {
           path: "buyerdashboard",
           element:<BuyerDashboard/>,
+          errorElement:<h1>404</h1>
+        },
+        {
+          path: "admindashboard",
+          element:<AdminDashboard/>,
           errorElement:<h1>404</h1>
         }
 
