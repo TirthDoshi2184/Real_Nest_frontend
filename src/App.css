@@ -367,3 +367,17 @@ table.common-table tbody {
     transform: translateY(-10px);
   }
 }
+.animate-ping-once {
+  animation: ping 0.5s cubic-bezier(0, 0, 0.2, 1) 1;
+}
+
+.text-shadow-lg {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}

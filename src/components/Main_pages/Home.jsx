@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -18,11 +18,33 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle
+  DialogTitle,
+  Chip
 } from '@mui/material';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
-import { HomeWorkOutlined, KeyOutlined, AttachMoneyOutlined, EmailOutlined, PhoneOutlined, ChatOutlined } from '@mui/icons-material';
+import { 
+  ArrowBack, 
+  ArrowForward, 
+  HomeWorkOutlined, 
+  KeyOutlined, 
+  AttachMoneyOutlined,
+  EmailOutlined, 
+  PhoneOutlined, 
+  ChatOutlined,
+  Home,
+  Store
+} from '@mui/icons-material';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR'
+  }).format(price);
+};
+
+const getPropertySize = (item) => {
+  return `${item.size || 'N/A'} sq ft`;
+};
 
 const InvestmentGuide = () => (
   <Box sx={{ py: 8, backgroundColor: 'background.default' }}>
@@ -59,7 +81,6 @@ const ContactSection = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
 
   const handleSubmit = () => {
-    // Implement form submission logic
     console.log(formData);
     setOpen(false);
   };
@@ -77,9 +98,6 @@ const ContactSection = () => {
               <Button variant="contained" color="primary" startIcon={<EmailOutlined />} onClick={() => setOpen(true)}>
                 Email Us
               </Button>
-              <Button variant="outlined" color="primary" startIcon={<PhoneOutlined />}>
-                Call Support
-              </Button>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -90,9 +108,9 @@ const ContactSection = () => {
               </Box>
               <Grid container spacing={2}>
                 {[
-                  { label: 'Phone', value: '+1 (555) 123-4567' },
-                  { label: 'Email', value: 'support@dreamhome.com' },
-                  { label: 'Office', value: '123 Property Lane, City, State' }
+                  { label: 'Phone', value: '+91 98985 43898' },
+                  { label: 'Email', value: 'realnest2109@gmail.com' },
+                  { label: 'Office', value: '23,Aditya Complex, Paldi' }
                 ].map((contact, index) => (
                   <Grid item xs={12} key={index}>
                     <Typography variant="subtitle1">{contact.label}:</Typography>
@@ -145,22 +163,67 @@ const ContactSection = () => {
   );
 };
 
-const HomePage = () => {
+const HomePage = ({ title, subtitle, type }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isTablet = useMediaQuery(theme.breakpoints.between('md', 'lg'));
+  const navigate = useNavigate();
+  
   const [properties, setProperties] = useState([]);
+  const [shops, setShops] = useState([]);
+  const [bunglows, setBunglows] = useState([]);
+  const [plots, setPlots] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [bunglowSlide, setBunglowSlide] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/flat/getflat')
-      .then((res) => setProperties(res.data.data))
-      .catch((err) => console.error('Error fetching properties:', err));
+    const fetchData = async () => {
+      try {
+        const [flatsRes, shopsRes, bunglowsRes, plotsRes] = await Promise.all([
+          axios.get('http://localhost:3000/flat/getflat'),
+          axios.get('http://localhost:3000/shop/getshop'),
+          axios.get('http://localhost:3000/bunglow/getbunglow'),
+          axios.get('http://localhost:3000/plot/getplot')
+        ]);
+
+        setProperties(flatsRes.data.data);
+        setShops(shopsRes.data.data);
+        setBunglows(bunglowsRes.data.data);
+        setPlots(plotsRes.data.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % properties.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + properties.length) % properties.length);
   const itemsPerSlide = isMobile ? 1 : isTablet ? 2 : 3;
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => 
+      prev < Math.ceil(properties.length / itemsPerSlide) - 1 ? prev + 1 : prev
+    );
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => prev > 0 ? prev - 1 : prev);
+  };
+
+  const bunglowNextSlide = () => {
+    setBunglowSlide((prev) => 
+      prev < Math.ceil(bunglows.length / itemsPerSlide) - 1 ? prev + 1 : prev
+    );
+  };
+
+  const bunglowPrevSlide = () => {
+    setBunglowSlide((prev) => prev > 0 ? prev - 1 : prev);
+  };
+
+  const handleLearnMore = () => {
+    navigate('/aboutus');
+  };
 
   return (
     <Box sx={{ width: '100%', overflowX: 'hidden' }}>
@@ -184,41 +247,48 @@ const HomePage = () => {
           <Typography variant="h5" sx={{ my: 2 }}>Discover properties tailored to your needs with ease.</Typography>
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
             <Button variant="contained" size="large">Explore Listings</Button>
-            <Button variant="outlined" size="large">Learn More</Button>
+            <Button variant="outlined" size="large" onClick={handleLearnMore}>Learn More</Button>
           </Box>
         </Container>
       </Box>
 
-      {/* Properties Slider */}
-      <Container sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4">Top Searched Properties</Typography>
-          <Box>
-            <IconButton onClick={prevSlide}><ArrowBack /></IconButton>
-            <IconButton onClick={nextSlide}><ArrowForward /></IconButton>
+      {/* Property Listings */}
+      {[
+        { title: 'Top Recent Flats', data: properties, currentSlide, prevSlide, nextSlide },
+        { title: 'Top Famous Bunglows', data: bunglows, currentSlide: bunglowSlide, prevSlide: bunglowPrevSlide, nextSlide: bunglowNextSlide }
+      ].map((section, index) => (
+        <Container key={index} sx={{ py: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Typography variant="h4">{section.title}</Typography>
+            <Box>
+              <IconButton onClick={section.prevSlide}><ArrowBack /></IconButton>
+              <IconButton onClick={section.nextSlide}><ArrowForward /></IconButton>
+            </Box>
           </Box>
-        </Box>
-        <Grid container spacing={2}>
-          {properties.slice(currentSlide, currentSlide + itemsPerSlide).map((property) => (
-            <Grid item xs={12} sm={6} md={4} key={property.id}>
-              <Link to={`/pdetail/${property._id}`} style={{ textDecoration: 'none' }}>
-                <Card sx={{ '&:hover': { transform: 'scale(1.05)', boxShadow: 6 } }}>
-                  <CardMedia
-                    component="img"
-                    height="240"
-                    image={property.imgUrl || 'https://via.placeholder.com/240'}
-                    alt={property.address}
-                  />
-                  <CardContent>
-                    <Typography variant="h6">{property.address}</Typography>
-                    <Typography variant="body1" color="secondary">{property.price}</Typography>
-                  </CardContent>
-                </Card>
-              </Link>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
+          <Grid container spacing={2}>
+            {section.data
+              .slice(section.currentSlide * itemsPerSlide, section.currentSlide * itemsPerSlide + itemsPerSlide)
+              .map((item) => (
+                <Grid item xs={12} sm={6} md={4} key={item._id}>
+                  <Link to={`/pdetail/${item._id}`} style={{ textDecoration: 'none' }}>
+                    <Card sx={{ '&:hover': { transform: 'scale(1.05)', boxShadow: 6 } }}>
+                      <CardMedia
+                        component="img"
+                        height="240"
+                        image={item.imgUrl || 'https://via.placeholder.com/240'}
+                        alt={item.address || item.area}
+                      />
+                      <CardContent>
+                        <Typography variant="h6">{item.address || item.area}</Typography>
+                        <Typography variant="body1" color="secondary">{(item.price)}</Typography>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </Grid>
+            ))}
+          </Grid>
+        </Container>
+      ))}
 
       {/* Services Section */}
       <Box sx={{ py: 8, backgroundColor: 'background.paper' }}>
@@ -242,16 +312,15 @@ const HomePage = () => {
         </Container>
       </Box>
 
-      {/* Testimonial Section */}
+      {/* Testimonials */}
       <Container sx={{ py: 8, textAlign: 'center' }}>
         <Typography variant="h4" sx={{ mb: 4 }}>What Our Clients Say</Typography>
         <Typography variant="h6" sx={{ fontStyle: 'italic', mb: 2 }}>
           "An incredible platform that made finding my dream home easier than ever!"
         </Typography>
-        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>- Jane Doe</Typography>
+        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>- Mark Twain</Typography>
       </Container>
 
-      {/* New Investment Guide and Contact Sections */}
       <InvestmentGuide />
       <ContactSection />
     </Box>

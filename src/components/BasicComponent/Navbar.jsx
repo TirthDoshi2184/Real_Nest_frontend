@@ -1,77 +1,297 @@
-import { Box, Button, Typography } from '@mui/material';
-import { useState } from 'react';
-import { styled } from '@mui/system';
+import React, { useState } from 'react';
+import { 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  Button, 
+  Box, 
+  Drawer, 
+  List, 
+  ListItem, 
+  ListItemIcon, 
+  ListItemText,
+  IconButton,
+  Menu,
+  MenuItem
+} from '@mui/material';
+import { 
+  Home as HomeIcon, 
+  List as ListIcon, 
+  AddCircle as AddCircleIcon, 
+  AccountCircle as ProfileIcon,
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  House as HouseIcon,
+  Business as BusinessIcon,
+  LandscapeOutlined as LandscapeIcon
+} from '@mui/icons-material';
 
 export const Navbar = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!sessionStorage.getItem("id") // Check if the user is logged in
-  );
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Property Type Dropdown
+  const handlePropertiesMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePropertiesMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Mobile Drawer Toggle
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  // Authentication Handlers
+  const handleLogin = () => {
+    window.location.href = '/login'; // Redirect to login page
+  };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("id"); // Clear the session
-    setIsAuthenticated(false); // Update state
-    window.location.href = "/"; // Redirect to home
+    // Clear authentication data (you can also add localStorage or sessionStorage logic)
+    setIsAuthenticated(false);
+    window.location.href = '/'; // Redirect to home page
   };
 
-  const handleLogin = () => {
-    window.location.href = "/login";
-  };
-
-  // Styled button with theme integration
-  const CustomButton = styled(Button)(({ theme }) => ({
-    textTransform: "none",
-    fontWeight: 600,
-    padding: "8px 20px",
-    borderRadius: theme.shape.borderRadius,
-    color: theme.palette.primary.contrastText,
-    backgroundColor: theme.palette.secondary.main,
-    "&:hover": {
-      backgroundColor: theme.palette.secondary.dark,
+  // Property Type Menu Items
+  const propertyTypes = [
+    { 
+      icon: <HouseIcon />, 
+      label: 'Flats', 
+      href: '/listproperty' 
     },
-  }));
+    { 
+      icon: <BusinessIcon />, 
+      label: 'Shops', 
+      href: '/shopproperty' 
+    },
+    { 
+      icon: <LandscapeIcon />, 
+      label: 'Plots', 
+    href: '/plotproperty' 
+    }
+  ];
 
-  return (
-    <Box
-      sx={{
-        bgcolor: "primary.main", // Navbar background color from theme
-        padding: "12px 24px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)", // Subtle shadow for depth
-        borderBottom: "1px solid",
-        borderColor: "primary.dark", // Subtle border for separation
+  // Navigation Links
+  const navLinks = [
+    { 
+      label: 'Home', 
+      icon: <HomeIcon />, 
+      href: '/' 
+    },
+    { 
+      label: 'Properties', 
+      icon: <ListIcon />, 
+      action: handlePropertiesMenuOpen 
+    },
+    { 
+      label: 'Sell Property', 
+      icon: <AddCircleIcon />, 
+      href: '/addproperty' 
+    }
+  ];
+
+  // Mobile Drawer Content
+  const drawerContent = (
+    <Box 
+      sx={{ 
+        width: 250, 
+        height: '100%', 
+        bgcolor: 'background.paper' 
       }}
+      role="presentation"
     >
-      {/* Navbar Title */}
-      <Typography
-        variant="h5"
-        component="div"
-        sx={{
-          fontFamily: "Poppins, Arial, sans-serif",
-          fontWeight: 700,
-          color: "primary.contrastText",
-        }}
-      >
-        <a
-          href="/"
-          style={{
-            textDecoration: "none",
-            color: "inherit", // Inherits the theme color
-          }}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        p: 2,
+        bgcolor: 'primary.main',
+        color: 'primary.contrastText'
+      }}>
+        <Typography variant="h6">PropEase</Typography>
+        <IconButton 
+          color="inherit" 
+          onClick={handleDrawerToggle}
         >
-          PrimeProperty Explorer
-        </a>
-      </Typography>
-
-      {/* Authentication Buttons */}
-      <Box>
-        {isAuthenticated ? (
-          <CustomButton onClick={handleLogout}>Logout</CustomButton>
-        ) : (
-          <CustomButton onClick={handleLogin}>Login</CustomButton>
-        )}
+          <CloseIcon />
+        </IconButton>
       </Box>
+      <List>
+        {navLinks.map((link) => (
+          <ListItem 
+            key={link.label} 
+            button 
+            onClick={link.href ? () => window.location.href = link.href : link.action}
+          >
+            <ListItemIcon>{link.icon}</ListItemIcon>
+            <ListItemText primary={link.label} />
+          </ListItem>
+        ))}
+        
+        {/* Property Types in Mobile Menu */}
+        <ListItem>
+          <ListItemText primary="Property Types" />
+        </ListItem>
+        {propertyTypes.map((property) => (
+          <ListItem 
+            key={property.label} 
+            button 
+            onClick={() => window.location.href = property.href}
+          >
+            <ListItemIcon>{property.icon}</ListItemIcon>
+            <ListItemText primary={property.label} />
+          </ListItem>
+        ))}
+
+        {/* Authentication */}
+        {isAuthenticated ? (
+          <>
+            <ListItem button onClick={() => window.location.href = '/profile'}>
+              <ListItemIcon><ProfileIcon /></ListItemIcon>
+              <ListItemText primary="My Profile" />
+            </ListItem>
+            <ListItem button onClick={handleLogout}>
+              <ListItemIcon><ProfileIcon /></ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItem>
+          </>
+        ) : (
+          <ListItem button onClick={handleLogin}>
+            <ListItemIcon><ProfileIcon /></ListItemIcon>
+            <ListItemText primary="Login" />
+          </ListItem>
+        )}
+      </List>
     </Box>
   );
+
+  return (
+    <>
+      <AppBar position="sticky" color="default" elevation={1}>
+        <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          {/* Mobile Menu Toggle */}
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={handleDrawerToggle}
+            sx={{ display: { md: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          {/* Logo */}
+          <Typography 
+            variant="h5" 
+            component="div" 
+            sx={{ 
+              flexGrow: { xs: 1, md: 0 }, 
+              fontWeight: 700,
+              color: 'primary.main'
+            }}
+          >
+           RealNest
+          </Typography>
+
+          {/* Desktop Navigation */}
+          <Box sx={{ 
+            display: { xs: 'none', md: 'flex' }, 
+            alignItems: 'center',
+            gap: 2
+          }}>
+            {navLinks.map((link) => (
+              link.href ? (
+                <Button 
+                  key={link.label} 
+                  startIcon={link.icon}
+                  onClick={() => window.location.href = link.href}
+                  color="inherit"
+                >
+                  {link.label}
+                </Button>
+              ) : (
+                <Button 
+                  key={link.label} 
+                  startIcon={link.icon}
+                  onClick={link.action}
+                  color="inherit"
+                >
+                  {link.label}
+                </Button>
+              )
+            ))}
+          </Box>
+
+          {/* Authentication & Profile */}
+          <Box>
+            {isAuthenticated ? (
+              <Button 
+                startIcon={<ProfileIcon />}
+                onClick={handleLogout}
+                color="primary"
+                variant="contained"
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button 
+                startIcon={<ProfileIcon />}
+                onClick={handleLogin}
+                color="primary"
+                variant="contained"
+              >
+                Login
+              </Button>
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Properties Type Dropdown Menu */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handlePropertiesMenuClose}
+      >
+        {propertyTypes.map((property) => (
+          <MenuItem 
+            key={property.label}
+            onClick={() => {
+              window.location.href = property.href;
+              handlePropertiesMenuClose();
+            }}
+          >
+            {property.icon}
+            <Typography sx={{ ml: 2 }}>{property.label}</Typography>
+          </MenuItem>
+        ))}
+      </Menu>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        variant="temporary"
+        anchor="left"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true,
+        }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': { 
+            boxSizing: 'border-box', 
+            width: 250 
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+    </>
+  );
 };
+
+export default Navbar;
