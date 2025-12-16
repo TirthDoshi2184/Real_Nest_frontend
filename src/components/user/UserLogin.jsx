@@ -44,10 +44,10 @@ export default function UserLogin() {
         sessionStorage.setItem("id", userDetails.data.user._id); // Save user ID to session storage
         switch (userDetails.data.user.role) {
           case "Seller":
-            navigate("/user/sellerdashboard");
+            navigate("/sellerdashboard");
             break;
           case "Buyer":
-            navigate("/user/buyerdashboard");
+            navigate("/home");
             break;
           case "Admin":
             navigate("/user/admindashboard");

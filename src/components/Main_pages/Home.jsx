@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import {
   Box,
   Button,
@@ -19,31 +22,34 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Chip
+  Chip,
+  CircularProgress,
+  Divider
 } from '@mui/material';
-import { 
-  ArrowBack, 
-  ArrowForward, 
-  HomeWorkOutlined, 
-  KeyOutlined, 
+import {
+  ArrowBack,
+  ArrowForward,
+  HomeWorkOutlined,
+  KeyOutlined,
   AttachMoneyOutlined,
-  EmailOutlined, 
-  PhoneOutlined, 
+  EmailOutlined,
+  PhoneOutlined,
   ChatOutlined,
   Home,
-  Store
+  Store,
+  LocationOn,
+  Style,
+  Search,
+  Timer
 } from '@mui/icons-material';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 
+// Initialize AOS
 const formatPrice = (price) => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR'
   }).format(price);
-};
-
-const getPropertySize = (item) => {
-  return `${item.size || 'N/A'} sq ft`;
 };
 
 const InvestmentGuide = () => (
@@ -85,6 +91,7 @@ const ContactSection = () => {
     setOpen(false);
   };
 
+ 
   return (
     <Box sx={{ py: 8, backgroundColor: 'background.paper', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
       <Container>
@@ -163,12 +170,269 @@ const ContactSection = () => {
   );
 };
 
+const StatisticsSection = () => (
+  <Box sx={{ py: 6, backgroundColor: 'background.default' }}>
+    <Container>
+      <Grid container spacing={4}>
+        {[
+          { number: '1000+', label: 'Properties Listed', icon: <Home /> },
+          { number: '500+', label: 'Happy Clients', icon: <Style /> },
+          { number: '50+', label: 'Cities Covered', icon: <LocationOn /> },
+          { number: '24/7', label: 'Support Available', icon: <Timer /> }
+        ].map((stat, index) => (
+          <Grid item xs={6} md={3} key={index}>
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
+                {stat.icon}
+                <Typography variant="h4" sx={{ my: 2, fontWeight: 'bold' }}>{stat.number}</Typography>
+                <Typography variant="body1">{stat.label}</Typography>
+              </Paper>
+            </motion.div>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
+  </Box>
+);
+const getPropertyDetailPath = (propertyType, itemId) => {
+  switch (propertyType) {
+    case 'flat':
+      return `/pdetail/${itemId}`;
+    case 'bunglow':
+      return `/bunglow/${itemId}`;
+    case 'shop':
+      return `/shop-detail/${itemId}`;
+    case 'plot':
+      return `/plot-detail/${itemId}`;
+    default:
+      return `/property-detail/${itemId}`;
+  }
+};
+const PropertyCard = ({ item, index, propertyType }) => (
+  
+  <motion.div
+  whileHover={{ scale: 1.03 }}
+  initial={{ opacity: 0, x: -20 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.5, delay: index * 0.1 }}
+>
+  <Link 
+    to={getPropertyDetailPath(propertyType, item._id)} 
+    style={{ textDecoration: 'none' }}
+  >
+    <Card sx={{
+      height: '100%',
+      position: 'relative',
+      '&:hover': {
+        boxShadow: 20,
+        '& .property-details': { transform: 'translateY(0)' }
+      }
+    }}>
+      <Box sx={{ 
+        position: 'relative',
+        width: '100%',
+        paddingTop: '75%',
+        overflow: 'hidden'
+      }}>
+        <CardMedia
+          component="img"
+          image={item.imageUrl || 'https://via.placeholder.com/400x300'}
+          alt={item.address || item.area}
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center'
+          }}
+        />
+      </Box>
+      <Box 
+        className="property-details" 
+        sx={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          bgcolor: 'rgba(0, 0, 0, 0.7)',
+          color: 'white',
+          p: 2,
+          transform: 'translateY(100%)',
+          transition: 'transform 0.3s ease-in-out'
+        }}
+      >
+        <Typography variant="h6" noWrap>{item.address || item.sqrft}</Typography>
+        <Typography variant="h5" color="primary">{item.price}</Typography>
+        <Chip
+          label={`${item.sqrft || '343'} sq ft`}
+          size="small"
+          sx={{ mt: 1, bgcolor: 'primary.main', color: 'white' }}
+        />
+      </Box>
+    </Card>
+  </Link>
+</motion.div>
+);
+
+const SearchSection = () => (
+  <Box
+    sx={{
+      py: 4,
+      backgroundColor: 'background.paper',
+      borderRadius: '16px',
+      mx: 2,
+      mt: -8,
+      position: 'relative',
+      zIndex: 2,
+      boxShadow: 3
+    }}
+    data-aos="fade-up"
+  >
+    <Container>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            label="Location"
+            variant="outlined"
+            InputProps={{
+              startAdornment: <LocationOn sx={{ color: 'primary.main', mr: 1 }} />
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            label="Property Type"
+            variant="outlined"
+            select
+            SelectProps={{ native: true }}
+          >
+            <option value="">All Types</option>
+            <option value="flat">Flat</option>
+            <option value="bunglow">Bunglow</option>
+            <option value="shop">Shop</option>
+            <option value="plot">Plot</option>
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            label="Price Range"
+            variant="outlined"
+            select
+            SelectProps={{ native: true }}
+          >
+            <option value="">Any Price</option>
+            <option value="0-5000000">Under 50 Lakh</option>
+            <option value="5000000-10000000">50 Lakh - 1 Cr</option>
+            <option value="10000000+">Above 1 Cr</option>
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Button
+            fullWidth
+            variant="contained"
+            size="large"
+            startIcon={<Search />}
+            sx={{ height: '56px' }}
+          >
+            Search Properties
+          </Button>
+        </Grid>
+      </Grid>
+    </Container>
+  </Box>
+);
+
+const FeaturedCategories = () => (
+  <Box sx={{ py: 8, backgroundColor: '#f5f5f5' }}>
+    <Container>
+      <Typography variant="h4" align="center" sx={{ mb: 6 }}>
+        Browse by Property Type
+      </Typography>
+      <Grid container spacing={4}>
+        {[
+          { title: 'Residential Flats', icon: '🏢', count: '500+' },
+          { title: 'Luxury Bunglows', icon: '🏠', count: '200+' },
+          { title: 'Commercial Shops', icon: '🏪', count: '150+' },
+          { title: 'Premium Plots', icon: '📍', count: '100+' }
+        ].map((category, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              data-aos="zoom-in"
+              data-aos-delay={index * 100}
+            >
+              <Card sx={{
+                textAlign: 'center',
+                p: 3,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}>
+                <Typography variant="h2" sx={{ mb: 2 }}>{category.icon}</Typography>
+                <Typography variant="h6" sx={{ mb: 1 }}>{category.title}</Typography>
+                <Typography variant="body1" color="primary.main">{category.count} listings</Typography>
+              </Card>
+            </motion.div>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
+  </Box>
+);
+
+const Testomorial = () => (
+  <Container sx={{ py: 8, textAlign: 'center' }}>
+    <Typography variant="h4" sx={{ mb: 4 }}>What Our Clients Say</Typography>
+    <Typography variant="h6" sx={{ fontStyle: 'italic', mb: 2 }}>
+      "An incredible platform that made finding my dream home easier than ever!"
+    </Typography>
+    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>- Mark Twain</Typography>
+  </Container>
+
+)
+
+const ServiceSection = () => (
+  <Box sx={{ py: 8, backgroundColor: 'background.paper' }}>
+    <Container>
+      <Typography variant="h4" align="center" sx={{ mb: 4 }}>Our Services</Typography>
+      <Grid container spacing={4}>
+        {[
+          { icon: '🏡', title: 'Buy a Home', desc: 'Browse our extensive listings and find your perfect home.' },
+          { icon: '🔑', title: 'Rent a Property', desc: 'Find the ideal rental that suits your lifestyle and budget.' },
+          { icon: '💰', title: 'Sell Your Home', desc: 'Get the best value for your property with our expert guidance.' },
+        ].map((service, i) => (
+          <Grid item xs={12} md={4} key={i}>
+            <Card sx={{ textAlign: 'center', p: 3, '&:hover': { boxShadow: 3 } }}>
+              <Typography variant="h2">{service.icon}</Typography>
+              <Typography variant="h6">{service.title}</Typography>
+              <Typography variant="body2" color="text.secondary">{service.desc}</Typography>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
+  </Box>
+)
+
+
 const HomePage = ({ title, subtitle, type }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isTablet = useMediaQuery(theme.breakpoints.between('md', 'lg'));
   const navigate = useNavigate();
-  
+
   const [properties, setProperties] = useState([]);
   const [shops, setShops] = useState([]);
   const [bunglows, setBunglows] = useState([]);
@@ -176,6 +440,13 @@ const HomePage = ({ title, subtitle, type }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [bunglowSlide, setBunglowSlide] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -202,7 +473,7 @@ const HomePage = ({ title, subtitle, type }) => {
   const itemsPerSlide = isMobile ? 1 : isTablet ? 2 : 3;
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => 
+    setCurrentSlide((prev) =>
       prev < Math.ceil(properties.length / itemsPerSlide) - 1 ? prev + 1 : prev
     );
   };
@@ -212,7 +483,7 @@ const HomePage = ({ title, subtitle, type }) => {
   };
 
   const bunglowNextSlide = () => {
-    setBunglowSlide((prev) => 
+    setBunglowSlide((prev) =>
       prev < Math.ceil(bunglows.length / itemsPerSlide) - 1 ? prev + 1 : prev
     );
   };
@@ -227,101 +498,99 @@ const HomePage = ({ title, subtitle, type }) => {
 
   return (
     <Box sx={{ width: '100%', overflowX: 'hidden' }}>
-      {/* Hero Section */}
+      {/* Enhanced Hero Section */}
       <Box sx={{
-        height: '85vh',
-        background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://cdn.pixabay.com/photo/2019/09/30/16/00/house-4516175_640.jpg') center/cover no-repeat`,
+        height: '92vh',
+        background: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://cdn.pixabay.com/photo/2019/09/30/16/00/house-4516175_640.jpg') center/cover no-repeat`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        position: 'relative'
       }}>
-        <Container sx={{ textAlign: 'center', color: 'white' }}>
-          <Typography variant="h2" sx={{
-            fontWeight: 'bold',
-            background: 'linear-gradient(to right, #6A82FB, #FC5C7D)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}>
-            Your Dream Home Awaits
-          </Typography>
-          <Typography variant="h5" sx={{ my: 2 }}>Discover properties tailored to your needs with ease.</Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-            <Button variant="contained" size="large">Explore Listings</Button>
-            <Button variant="outlined" size="large" onClick={handleLearnMore}>Learn More</Button>
-          </Box>
+        <Container sx={{ textAlign: 'center', color: 'white', position: 'relative', zIndex: 1 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <Typography variant="h2" sx={{
+              fontWeight: 'bold',
+              background: 'linear-gradient(to right, #6A82FB, #FC5C7D)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              mb: 3
+            }}>
+              Discover Your Perfect Property
+            </Typography>
+            <Typography variant="h5" sx={{ mb: 4 }}>
+              Your journey to finding the ideal property starts here
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+              <Button
+                variant="contained"
+                size="large"
+                sx={{ px: 4, py: 1.5 }}
+              >
+                Start Exploring
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                sx={{ px: 4, py: 1.5, color: 'white', borderColor: 'white' }}
+                onClick={handleLearnMore}
+              >
+                Learn More
+              </Button>
+            </Box>
+          </motion.div>
         </Container>
       </Box>
+      {/* 
+        <SearchSection />
+        <StatisticsSection /> */}
+      <FeaturedCategories />
 
-      {/* Property Listings */}
+      {/* Enhanced Property Listings */}
       {[
-        { title: 'Top Recent Flats', data: properties, currentSlide, prevSlide, nextSlide },
-        { title: 'Top Famous Bunglows', data: bunglows, currentSlide: bunglowSlide, prevSlide: bunglowPrevSlide, nextSlide: bunglowNextSlide }
+        { title: 'Featured Flats', data: properties, currentSlide, prevSlide, nextSlide, propertyType: 'flat' },
+        { title: 'Luxury Bunglows', data: bunglows, currentSlide: bunglowSlide, prevSlide: bunglowPrevSlide, nextSlide: bunglowNextSlide, propertyType: 'bunglow' }
       ].map((section, index) => (
-        <Container key={index} sx={{ py: 4 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-            <Typography variant="h4">{section.title}</Typography>
+        <Container key={index} sx={{ py: 6 }}>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 4
+          }} data-aos="fade-right">
+            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>{section.title}</Typography>
             <Box>
               <IconButton onClick={section.prevSlide}><ArrowBack /></IconButton>
               <IconButton onClick={section.nextSlide}><ArrowForward /></IconButton>
             </Box>
           </Box>
-          <Grid container spacing={2}>
+          <Grid container spacing={3}>
             {section.data
               .slice(section.currentSlide * itemsPerSlide, section.currentSlide * itemsPerSlide + itemsPerSlide)
-              .map((item) => (
+              .map((item, idx) => (
                 <Grid item xs={12} sm={6} md={4} key={item._id}>
-                  <Link to={`/pdetail/${item._id}`} style={{ textDecoration: 'none' }}>
-                    <Card sx={{ '&:hover': { transform: 'scale(1.05)', boxShadow: 6 } }}>
-                      <CardMedia
-                        component="img"
-                        height="240"
-                        image={item.imgUrl || 'https://via.placeholder.com/240'}
-                        alt={item.address || item.area}
-                      />
-                      <CardContent>
-                        <Typography variant="h6">{item.address || item.area}</Typography>
-                        <Typography variant="body1" color="secondary">{(item.price)}</Typography>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                  <PropertyCard 
+                    item={item} 
+                    index={idx} 
+                    propertyType={section.propertyType}
+                  />
                 </Grid>
-            ))}
+              ))}
           </Grid>
         </Container>
       ))}
 
       {/* Services Section */}
-      <Box sx={{ py: 8, backgroundColor: 'background.paper' }}>
-        <Container>
-          <Typography variant="h4" align="center" sx={{ mb: 4 }}>Our Services</Typography>
-          <Grid container spacing={4}>
-            {[
-              { icon: '🏡', title: 'Buy a Home', desc: 'Browse our extensive listings and find your perfect home.' },
-              { icon: '🔑', title: 'Rent a Property', desc: 'Find the ideal rental that suits your lifestyle and budget.' },
-              { icon: '💰', title: 'Sell Your Home', desc: 'Get the best value for your property with our expert guidance.' },
-            ].map((service, i) => (
-              <Grid item xs={12} md={4} key={i}>
-                <Card sx={{ textAlign: 'center', p: 3, '&:hover': { boxShadow: 3 } }}>
-                  <Typography variant="h2">{service.icon}</Typography>
-                  <Typography variant="h6">{service.title}</Typography>
-                  <Typography variant="body2" color="text.secondary">{service.desc}</Typography>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
+      <ServiceSection />
       {/* Testimonials */}
-      <Container sx={{ py: 8, textAlign: 'center' }}>
-        <Typography variant="h4" sx={{ mb: 4 }}>What Our Clients Say</Typography>
-        <Typography variant="h6" sx={{ fontStyle: 'italic', mb: 2 }}>
-          "An incredible platform that made finding my dream home easier than ever!"
-        </Typography>
-        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>- Mark Twain</Typography>
-      </Container>
-
+      <Testomorial />
+      {/* InvestmentGuide */}
       <InvestmentGuide />
+      {/* Contact Section */}
       <ContactSection />
     </Box>
   );

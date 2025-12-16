@@ -1,691 +1,404 @@
-import React, { useRef } from 'react';
-import styled from 'styled-components';
-import { motion, useInView } from 'framer-motion';
-import { 
-  Target, Shield, Zap, Building, Users, 
-  Globe, TrendingUp, Lock, Clock, Headphones, Infinity
+import React, { useState } from 'react';
+import {
+  Home, Building, Users, Trophy, Shield, Star,
+  ArrowRight, Banknote, Key, Search, PieChart,
+  ArrowDown, CheckCircle, Globe, Target, Heart
 } from 'lucide-react';
-
-// Theme Configuration
-const theme = {
-  colors: {
-    primary: '#4A6CF7',
-    secondary: '#3A4FE0',
-    white: '#FFFFFF',
-    text: '#2c3e50',
-    background: '#f5f7fa',
-    lightBackground: '#f4f6f9'
-  },
-  typography: {
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"
-  }
-};
-
-// Styled Components
-const PageContainer = styled.div`
-  background: linear-gradient(135deg, ${theme.colors.background} 0%, #e9ecef 100%);
-  font-family: ${theme.typography.fontFamily};
-  color: ${theme.colors.text};
-  line-height: 1.6;
-`;
-
-const SectionContainer = styled(motion.div)`
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 80px 20px;
-`;
-
-const SectionTitle = styled(motion.h2)`
-  font-size: 3.5rem;
-  font-weight: 900;
-  color: ${theme.colors.text};
-  text-align: center;
-  margin-bottom: 60px;
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 5px;
-    background: linear-gradient(45deg, ${theme.colors.primary}, ${theme.colors.secondary});
-  }
-`;
-
-const HeroSection = styled.div`
-  background: linear-gradient(135deg, ${theme.colors.primary} 0%, ${theme.colors.secondary} 100%);
-  color: ${theme.colors.white};
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 80vh;
-  text-align: center;
-`;
-
-const CardBase = styled(motion.div)`
-  background: ${theme.colors.white};
-  border-radius: 20px;
-  padding: 30px;
-  text-align: center;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 45px rgba(0,0,0,0.15);
-  }
-`;
-
-const TimelineItem = styled(motion.div)`
-  position: relative;
-  padding: 20px;
-  margin-bottom: 30px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-
-  &::before {
-    content: '';
-    position: absolute;
-    width: 3px;
-    height: 100%;
-    background: linear-gradient(45deg, ${theme.colors.primary}, ${theme.colors.secondary});
-    left: -30px;
-    top: 0;
-  }
-`;
-
-const TestimonialCard = styled(CardBase)`
-  position: relative;
-
-  &::before {
-    content: '"';
-    position: absolute;
-    top: 10px;
-    left: 20px;
-    font-size: 5rem;
-    color: ${theme.colors.primary};
-    opacity: 0.2;
-  }
-`;
-
-const TechInnovationSection = styled(motion.div)`
-  background: linear-gradient(135deg, ${theme.colors.primary} 0%, ${theme.colors.secondary} 100%);
-  color: white;
-  padding: 80px 20px;
-  text-align: center;
-`;
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const AboutUs = () => {
-  // Section References
-  const sectionRefs = {
-    mission: useRef(null),
-    timeline: useRef(null),
-    stats: useRef(null),
-    features: useRef(null),
-    testimonials: useRef(null),
-    innovation: useRef(null)
-  };
+const navigate = useNavigate();
 
-  // In-View Tracking
-  const isInView = Object.fromEntries(
-    Object.keys(sectionRefs).map(key => [key, useInView(sectionRefs[key], { once: true })])
-  );
+  const checkAuth = (path) => {
+  const userId = sessionStorage.getItem('id');
+  if (!userId) {
+    navigate('/login', { state: { from: path } });
+    return; // Exit function, don't continue
+  }
+  navigate(path); // This only runs if userId exists
+};
+  // ... (keep all the existing constants: stats, services, values, testimonials)
 
-  // Configuration Data
-  const companyStats = [
-    { icon: <Building color={theme.colors.primary} size={50} />, number: "500+", label: "Properties Listed" },
-    { icon: <Users color="#2ECC71" size={50} />, number: "10K+", label: "Happy Customers" },
-    { icon: <Globe color="#E74C3C" size={50} />, number: "25", label: "Cities Covered" },
-    { icon: <TrendingUp color="#F39C12" size={50} />, number: "98%", label: "Customer Satisfaction" }
+  const handleExplore = () => {
+  checkAuth('/home');
+};
+
+  const stats = [
+    { icon: <Home size={24} />, value: "10K+", label: "Properties Sold" },
+    { icon: <Users size={24} />, value: "50K+", label: "Happy Clients" },
+    { icon: <Building size={24} />, value: "15+", label: "Cities Covered" },
+    { icon: <Trophy size={24} />, value: "12+", label: "Years Experience", highlight: true }
   ];
 
-  const companyTimeline = [
+  const services = [
     {
-      year: "2018",
-      title: "Company Inception",
-      description: "Founded with a vision to revolutionize real estate technology."
+      icon: <Key className="text-blue-500" size={32} />,
+      title: "Buy Property",
+      description: "Find your dream home from our extensive collection of properties"
     },
     {
-      year: "2020",
-      title: "First Major Platform Launch",
-      description: "Introduced our AI-powered property matching algorithm."
+      icon: <Banknote className="text-green-500" size={32} />,
+      title: "Sell Property",
+      description: "Get the best value for your property with our expert guidance"
     },
     {
-      year: "2022",
-      title: "National Expansion",
-      description: "Expanded operations across 25+ major cities in India."
+      icon: <Home className="text-purple-500" size={32} />,
+      title: "Rent Property",
+      description: "Discover rental properties that match your lifestyle"
     }
   ];
 
-  const missionValues = [
+  const values = [
     {
-      icon: <Target color={theme.colors.primary} size={60} />,
-      title: "Precision Matching",
-      description: "Advanced algorithms connecting perfect properties with ideal customers."
+      icon: <Heart className="text-red-500" size={32} />,
+      title: "Client-Centric Approach",
+      description: "Your dreams and needs are at the heart of everything we do"
     },
     {
-      icon: <Shield color="#2ECC71" size={60} />,
-      title: "Transparent Transactions",
-      description: "Ensuring trust, security, and clarity in every real estate interaction."
+      icon: <Target className="text-blue-500" size={32} />,
+      title: "Excellence in Service",
+      description: "Committed to delivering exceptional real estate experiences"
     },
     {
-      icon: <Zap color="#E74C3C" size={60} />,
-      title: "Innovative Solutions",
-      description: "Continuously evolving technology to simplify property discovery."
-    }
-  ];
-
-
-  const features = [
-    {
-      icon: <Shield color={theme.colors.primary} size={60} />,
-      title: "Secure Transactions",
-      description: "End-to-end encryption and verified property listings ensure complete transaction security."
+      icon: <Globe className="text-green-500" size={32} />,
+      title: "Global Standards",
+      description: "Following international best practices in real estate"
     },
     {
-      icon: <Infinity color="#2ECC71" size={60} />,
-      title: "Comprehensive Listings",
-      description: "Extensive database covering plots, shops, flats, and bungalows across multiple cities."
-    },
-    {
-      icon: <Headphones color="#E74C3C" size={60} />,
-      title: "24/7 Support",
-      description: "Dedicated customer support team available round the clock to assist you."
-    },
-    {
-      icon: <Clock color="#F39C12" size={60} />,
-      title: "Quick Matching",
-      description: "AI-powered property matching algorithm connects you with ideal properties instantly."
+      icon: <CheckCircle className="text-purple-500" size={32} />,
+      title: "Integrity & Trust",
+      description: "Building relationships based on transparency and honesty"
     }
   ];
 
   const testimonials = [
     {
-      name: "Sarah Mitchell",
-      role: "First-Time Homebuyer",
-      text: "RealNest made my property buying journey incredibly smooth. Their platform is intuitive and the support team was fantastic!",
-      location: "Mumbai"
+      name: "Sarah Johnson",
+      role: "Homeowner",
+      image: "/api/placeholder/80/80",
+      quote: "RealNest helped me find my dream home within my budget. Their team was incredibly supportive throughout the process."
     },
     {
-      name: "Raj Patel",
-      role: "Real Estate Investor",
-      text: "The comprehensive property insights and secure transaction process set RealNest apart from other platforms.",
-      location: "Ahmedabad"
+      name: "Michael Chen",
+      role: "Property Investor",
+      image: "/api/placeholder/80/80",
+      quote: "The market insights and investment opportunities provided by RealNest have been invaluable for my portfolio growth."
     },
     {
-      name: "Emily Wong",
-      role: "Commercial Property Seeker",
-      text: "Finding the perfect shop for my business was effortless with RealNest's advanced search capabilities.",
-      location: "Bangalore"
+      name: "Priya Patel",
+      role: "Business Owner",
+      image: "/api/placeholder/80/80",
+      quote: "Found the perfect commercial space for my restaurant. The team understood exactly what I was looking for."
     }
   ];
-
-  const techInnovations = [
-    {
-      icon: <TrendingUp color="white" size={50} />,
-      title: "AI Matching",
-      description: "Advanced algorithms that predict and match your ideal property"
-    },
-    {
-      icon: <Globe color="white" size={50} />,
-      title: "Nationwide Coverage",
-      description: "Extensive property database across multiple cities and regions"
-    },
-    {
-      icon: <Lock color="white" size={50} />,
-      title: "Secure Platform",
-      description: "End-to-end encryption and verified property listings"
-    }
-  ];
-  const missionHighlights = [
-    {
-      icon: <Target color="white" size={40} />,
-      title: "Precision",
-      description: "AI-driven property matching",
-    },
-    {
-      icon: <Globe color="white" size={40} />,
-      title: "Reach",
-      description: "Nationwide property coverage",
-    },
-    {
-      icon: <Users color="white" size={40} />,
-      title: "Trust",
-      description: "Transparent transactions",
-    },
-  ];
-  
 
   return (
-    <PageContainer>
-         <div
-      style={{
-        position: 'relative',
-        background: `linear-gradient(135deg, ${theme.colors.primary} 0%, ${theme.colors.secondary} 100%)`,
-        color: 'white',
-        minHeight: '70vh',
-        display: 'flex',
-        alignItems: 'center',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Background Abstract Shapes */}
-      <motion.div
-        style={{
-          position: 'absolute',
-          top: '-10%',
-          right: '-10%',
-          width: '500px',
-          height: '500px',
-          background: 'rgba(255,255,255,0.1)',
-          borderRadius: '50%',
-          zIndex: 1,
-        }}
-        animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-        transition={{ duration: 20, repeat: Infinity, repeatType: 'loop' }}
-      />
-
-      <div
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '0 20px',
-          position: 'relative',
-          zIndex: 10,
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        {/* Text Content */}
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          style={{ flex: 1, paddingRight: '40px' }}
-        >
-          <motion.h1
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            style={{
-              fontSize: '4rem',
-              fontWeight: 900,
-              marginBottom: '25px',
-              lineHeight: 1.2,
-            }}
-          >
-            Transforming Real Estate
-            <br />
-            <span style={{ color: '#FFD700' }}>Beyond Boundaries</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            style={{
-              fontSize: '1.4rem',
-              marginBottom: '30px',
-              fontWeight: 300,
-              opacity: 0.9,
-            }}
-          >
-            Empowering dreams through innovative technology, comprehensive insights, and a
-            customer-centric approach to real estate discovery and transactions.
-          </motion.p>
-
-          {/* Mission Highlights */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            style={{ display: 'flex', gap: '30px', marginTop: '40px' }}
-          >
-            {missionHighlights.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  textAlign: 'center',
-                  background: 'rgba(255,255,255,0.1)',
-                  padding: '20px',
-                  borderRadius: '15px',
-                  flex: 1,
-                }}
-              >
-                <div style={{ marginBottom: '15px' }}>{item.icon}</div>
-                <h3
-                  style={{
-                    fontSize: '1.3rem',
-                    fontWeight: 'bold',
-                    marginBottom: '10px',
-                  }}
-                >
-                  {item.title}
-                </h3>
-                <p
-                  style={{
-                    fontSize: '0.9rem',
-                    opacity: 0.8,
-                  }}
-                >
-                  {item.description}
-                </p>
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* Interactive 3D Model */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          style={{ flex: 1, position: 'relative', height: '500px' }}
-        >
-          <Canvas style={{ borderRadius: '30px', boxShadow: '0 25px 50px rgba(0,0,0,0.2)' }}>
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[5, 5, 5]} intensity={1} />
-            <RotatingCube />
-            <OrbitControls enableZoom={false} />
-          </Canvas>
-        </motion.div>
-      </div>
-    </div>
-      {/* Company Mission & Values */}
-      <SectionContainer 
-        ref={sectionRefs.mission}
-        initial={{ opacity: 0, y: 50 }}
-        animate={isInView.mission ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
-      >
-        <SectionTitle>Our Mission & Vision</SectionTitle>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-          gap: '30px' 
-        }}>
-          {missionValues.map((item, index) => (
-            <CardBase
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              animate={isInView.mission ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: index * 0.2, duration: 0.6 }}
-            >
-              <div style={{ marginBottom: '20px' }}>{item.icon}</div>
-              <h3 style={{ 
-                fontSize: '1.8rem', 
-                marginBottom: '15px', 
-                fontWeight: 'bold' 
-              }}>
-                {item.title}
-              </h3>
-              <p>{item.description}</p>
-            </CardBase>
-          ))}
-        </div>
-      </SectionContainer>
-
-      {/* Company Values and Culture Section */}
-      <SectionContainer
-        ref={sectionRefs.timeline}
-        style={{ background: theme.colors.lightBackground }}
-      >
-        <SectionTitle>Our Core Values</SectionTitle>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-          gap: '30px' 
-        }}>
-          {[
-            {
-              icon: <Users color={theme.colors.primary} size={60} />,
-              title: "Customer-First Approach",
-              description: "We prioritize our customers' needs, ensuring personalized solutions and exceptional support at every step of their real estate journey.",
-              color: theme.colors.primary
-            },
-            {
-              icon: <Lock color="#2ECC71" size={60} />,
-              title: "Integrity & Trust",
-              description: "Transparency and honesty are the cornerstones of our business. We build lasting relationships through ethical practices and genuine commitment.",
-              color: "#2ECC71"
-            },
-            {
-              icon: <Globe color="#E74C3C" size={60} />,
-              title: "Continuous Innovation",
-              description: "We constantly evolve our technology and approaches, staying ahead of market trends to deliver cutting-edge real estate solutions.",
-              color: "#E74C3C"
-            }
-          ].map((value, index) => (
-            <CardBase
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              animate={isInView.timeline ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: index * 0.3, duration: 0.6 }}
-            >
-              <div style={{ 
-                marginBottom: '20px', 
-                color: value.color 
-              }}>
-                {value.icon}
-              </div>
-              <h3 style={{ 
-                fontSize: '1.8rem', 
-                marginBottom: '15px', 
-                fontWeight: 'bold',
-                color: theme.colors.text
-              }}>
-                {value.title}
-              </h3>
-              <p style={{ 
-                color: theme.colors.text,
-                lineHeight: 1.6 
-              }}>
-                {value.description}
-              </p>
-            </CardBase>
-          ))}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Enhanced Hero Section */}
+      <div className="relative min-h-screen flex flex-col">
+        {/* Background Image Layer */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[url('/api/placeholder/1920/1080')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-800/80 to-transparent" />
+          <div className="absolute inset-0 bg-black/20" />
         </div>
 
-        {/* Culture Highlights */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView.timeline ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.9, duration: 0.6 }}
-          style={{ 
-            marginTop: '60px', 
-            textAlign: 'center', 
-            maxWidth: '800px', 
-            margin: '60px auto 0' 
+        {/* Floating Elements - Animated */}
+        <motion.div 
+          className="absolute right-10 top-40 w-32 h-32 bg-white/10 backdrop-blur-lg rounded-2xl"
+          animate={{ 
+            y: [0, 20, 0],
+            rotate: [0, 5, 0]
+          }}
+          transition={{ 
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut"
           }}
         >
-          <h3 style={{ 
-            fontSize: '2.5rem', 
-            marginBottom: '20px',
-            color: theme.colors.text
-          }}>
-            Our Cultural Commitment
-          </h3>
-          <p style={{ 
-            fontSize: '1.2rem', 
-            color: theme.colors.text,
-            lineHeight: 1.8 
-          }}>
-            At RealNest, we believe in creating an ecosystem that goes beyond transactions. 
-            We foster a culture of collaboration, continuous learning, and social responsibility. 
-            Our team is committed to not just transforming real estate technology, but also 
-            making a positive impact on the communities we serve.
-          </p>
+          <div className="p-4 text-white text-center">
+            <Home size={32} className="mx-auto mb-2" />
+            <div className="text-sm font-semibold">10K+</div>
+            <div className="text-xs">Properties</div>
+          </div>
         </motion.div>
-      </SectionContainer>
-      {/* Company Stats */}
-      <SectionContainer 
-        ref={sectionRefs.stats}
-        initial={{ opacity: 0, y: 50 }}
-        animate={isInView.stats ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
-      >
-        <SectionTitle>Our Achievement Highlights</SectionTitle>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-          gap: '30px' 
-        }}>
-          {companyStats.map((stat, index) => (
-            <CardBase
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={isInView.stats ? { opacity: 1, scale: 1 } : {}}
-              transition={{ delay: index * 0.2, duration: 0.6 }}
+
+        <motion.div 
+          className="absolute left-20 bottom-40 w-32 h-32 bg-white/10 backdrop-blur-lg rounded-2xl"
+          animate={{ 
+            y: [0, -20, 0],
+            rotate: [0, -5, 0]
+          }}
+          transition={{ 
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5
+          }}
+        >
+          <div className="p-4 text-white text-center">
+            <Users size={32} className="mx-auto mb-2" />
+            <div className="text-sm font-semibold">50K+</div>
+            <div className="text-xs">Happy Clients</div>
+          </div>
+        </motion.div>
+
+        {/* Main Content */}
+        <div className="relative z-10 flex-grow flex items-center">
+          <div className="max-w-7xl mx-auto px-4 py-20">
+            {/* Text Content */}
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1 }}
+              className="text-white text-center max-w-4xl mx-auto"
             >
-              <div style={{ marginBottom: '20px' }}>{stat.icon}</div>
-              <h3 style={{ 
-                fontSize: '3rem', 
-                fontWeight: 'bold', 
-                color: theme.colors.primary, 
-                marginBottom: '10px' 
-              }}>
-                {stat.number}
-              </h3>
-              <p style={{ fontSize: '1.1rem' }}>{stat.label}</p>
-            </CardBase>
-          ))}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="mb-6 inline-block px-4 py-2 bg-blue-500/20 backdrop-blur-sm rounded-full"
+              >
+                <span className="text-sm font-semibold">Trusted by 50,000+ Happy Clients</span>
+              </motion.div>
+              
+              <motion.h1 
+                className="text-6xl font-bold mb-6 leading-tight"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                Building Dreams,<br />
+                <span className="text-blue-400">Creating Homes</span>
+              </motion.h1>
+              
+              <motion.p 
+                className="text-xl mb-8 text-gray-200"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                Since 2024, RealNest has been revolutionizing the real estate experience. 
+                We don't just sell properties; we help you discover the perfect place to 
+                create lasting memories.
+              </motion.p>
+              
+              <motion.div 
+                className="flex justify-center gap-4"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <button 
+                  onClick={handleExplore}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full 
+                           font-semibold transition-all flex items-center gap-2 group"
+                >
+                  Explore Properties
+                  <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              </motion.div>
+              {/* Trust Indicators */}
+              <motion.div 
+                className="mt-12 flex justify-center gap-12"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+              >
+                {[
+                  { icon: <Star size={20} />, text: "5-Star Rated" },
+                  { icon: <Shield size={20} />, text: "Fully Verified" },
+                  { icon: <CheckCircle size={20} />, text: "24/7 Support" }
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center gap-2 text-sm text-gray-300">
+                    {item.icon}
+                    {item.text}
+                  </div>
+                ))}
+              </motion.div>
+            </motion.div>
+          </div>
         </div>
-      </SectionContainer>
 
-      {/* Features Section */}
-      <SectionContainer 
-        ref={sectionRefs.features}
-        initial={{ opacity: 0, y: 50 }}
-        animate={isInView.features ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
-      >
-        <SectionTitle>Why Choose RealNest?</SectionTitle>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-          gap: '30px' 
-        }}>
-          {features.map((feature, index) => (
-            <CardBase
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={isInView.features ? { opacity: 1, scale: 1 } : {}}
-              transition={{ delay: index * 0.2, duration: 0.6 }}
-            >
-              <div style={{ marginBottom: '20px' }}>{feature.icon}</div>
-              <h3 style={{ 
-                fontSize: '1.8rem', 
-                marginBottom: '15px', 
-                fontWeight: 'bold'
-              }}>
-              {feature.title}
-            </h3>
-            <p>{feature.description}</p>
-          </CardBase>
-        ))}
+        {/* Scroll Indicator */}
+        <motion.div 
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white text-center"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ 
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        >
+          <div className="text-sm mb-2">Scroll to explore</div>
+          <ArrowDown size={20} className="mx-auto" />
+        </motion.div>
       </div>
-    </SectionContainer>
 
-    {/* Testimonials Section */}
-    <SectionContainer 
-      ref={sectionRefs.testimonials}
-      style={{ background: theme.colors.lightBackground }}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView.testimonials ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6 }}
-    >
-      <SectionTitle>What Our Customers Say</SectionTitle>
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
-        gap: '30px' 
-      }}>
-        {testimonials.map((testimonial, index) => (
-          <TestimonialCard
-            key={index}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView.testimonials ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: index * 0.2, duration: 0.6 }}
-          >
-            <p style={{ 
-              fontSize: '1.2rem', 
-              marginBottom: '20px',
-              fontStyle: 'italic'
-            }}>
-              {testimonial.text}
-            </p>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              marginTop: '20px'
-            }}>
-              <div>
-                <h4 style={{ 
-                  fontSize: '1.3rem', 
-                  fontWeight: 'bold', 
-                  color: theme.colors.primary 
-                }}>
-                  {testimonial.name}
-                </h4>
-                <p style={{ 
-                  fontSize: '1rem', 
-                  color: theme.colors.text 
-                }}>
-                  {testimonial.role}, {testimonial.location}
-                </p>
-              </div>
-            </div>
-          </TestimonialCard>
-        ))}
-      </div>
-    </SectionContainer>
+      {/* Stats Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className={`p-8 rounded-xl ${
+                  stat.highlight ? 'bg-blue-600 text-white' : 'bg-gray-50'
+                }`}
+              >
+                <div className={`mb-4 ${stat.highlight ? 'text-white' : 'text-blue-600'}`}>
+                  {stat.icon}
+                </div>
+                <div className="text-4xl font-bold mb-2">{stat.value}</div>
+                <div className={stat.highlight ? 'text-blue-100' : 'text-gray-600'}>
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-    {/* Tech Innovation Section */}
-    <TechInnovationSection
-      ref={sectionRefs.innovation}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView.innovation ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6 }}
-    >
-      <SectionTitle style={{ color: 'white' }}>Our Technological Edge</SectionTitle>
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-        gap: '30px' 
-      }}>
-        {techInnovations.map((innovation, index) => (
+      {/* Our Values Section (New) */}
+      <section className="py-20 bg-gradient-to-br from-blue-900 to-blue-700 text-white">
+        <div className="max-w-7xl mx-auto px-4">
           <motion.div
-            key={index}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView.innovation ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: index * 0.2, duration: 0.6 }}
-            style={{ 
-              textAlign: 'center', 
-              color: 'white' 
-            }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
           >
-            <div style={{ marginBottom: '20px' }}>{innovation.icon}</div>
-            <h3 style={{ 
-              fontSize: '1.8rem', 
-              marginBottom: '15px', 
-              fontWeight: 'bold' 
-            }}>
-              {innovation.title}
-            </h3>
-            <p>{innovation.description}</p>
+            <h2 className="text-4xl font-bold mb-4">Our Core Values</h2>
+            <p className="text-xl text-blue-200">The principles that guide us in creating exceptional real estate experiences</p>
           </motion.div>
-        ))}
-      </div>
-    </TechInnovationSection>
-  </PageContainer>
-);
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {values.map((value, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-8 rounded-xl bg-white/10 backdrop-blur-lg"
+                whileHover={{ y: -10 }}
+              >
+                <div className="mb-6">{value.icon}</div>
+                <h3 className="text-2xl font-bold mb-4">{value.title}</h3>
+                <p className="text-blue-200">{value.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.h2 
+            className="text-4xl font-bold text-center mb-16"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            Our Services
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {services.map((service, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-8 rounded-xl bg-gray-50 shadow-lg"
+                whileHover={{ scale: 1.05 }}
+              >
+                <div className="mb-6">{service.icon}</div>
+                <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
+                <p className="text-gray-600">{service.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 bg-gradient-to-br from-gray-900 to-blue-900 text-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.h2 
+            className="text-4xl font-bold text-center mb-16"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            Client Success Stories
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-8 rounded-xl bg-white/10 backdrop-blur-lg"
+              >
+                <div className="flex items-center mb-6">
+                  <img 
+                    src={testimonial.image} 
+                    alt={testimonial.name}
+                    className="w-16 h-16 rounded-full mr-4"
+                  />
+                  <div>
+                    <h3 className="font-bold text-lg">{testimonial.name}</h3>
+                    <p className="text-blue-300">{testimonial.role}</p>
+                  </div>
+                </div>
+                <p className="text-gray-300 italic">"{testimonial.quote}"</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <motion.h2 
+            className="text-4xl font-bold mb-8"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >            Ready to Find Your Perfect Property?
+          </motion.h2>
+          <motion.p 
+            className="text-xl mb-12 text-gray-600"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            Join thousands of satisfied clients who have found their dream properties with RealNest
+          </motion.p>
+          <motion.div 
+                className="flex justify-center gap-4"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <button 
+                  onClick={handleExplore}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full 
+                           font-semibold transition-all flex items-center gap-2 group"
+                >
+                  Explore Properties
+                  <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              </motion.div>
+        </div>
+      </section>
+    </div>
+  );
 };
 
 export default AboutUs;

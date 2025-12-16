@@ -99,12 +99,17 @@ const Flatproperty = () => {
               }
             }}>
               <Box sx={{ position: 'relative' }}>
-                <CardMedia
-                  component="img"
-                  height="250"
-                  image={property.imgUrl}
-                  alt={property.type}
-                />
+              <CardMedia
+  component="img"
+  height="300"                    // Increased from 250px for better showcase
+  width="100%"                    // Ensures full width
+  image={property.imageUrl}
+  alt={property.type}
+  sx={{
+    objectFit: 'cover',          // Ensures image covers area without distortion
+    aspectRatio: '16/9',         // Maintains consistent aspect ratio
+  }}
+/>
                 <Box sx={{
                   position: 'absolute',
                   top: 16,
@@ -188,11 +193,16 @@ const Flatproperty = () => {
                 }
               }}>
                 <CardMedia
-                  component="img"
-                  height="200"
-                  image={property.imgUrl}
-                  alt={property.type}
-                />
+  component="img"
+  height="240"                    // Adjusted from 200px for better visibility
+  width="100%"
+  image={property.imageUrl}
+  alt={property.type}
+  sx={{
+    objectFit: 'cover',
+    aspectRatio: '4/3',          // Slightly more square ratio for property display
+  }}
+/>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
                     {property.type}
@@ -235,11 +245,16 @@ const Flatproperty = () => {
               overflow: 'hidden'
             }}>
               <CardMedia
-                component="img"
-                height="160"
-                image={property.imgUrl}
-                alt={property.type}
-              />
+  component="img"
+  height="200"                    // Adjusted from 160px for consistency
+  width="100%"
+  image={property.imageUrl}
+  alt={property.type}
+  sx={{
+    objectFit: 'cover',
+    aspectRatio: '3/2',
+  }}
+/>
               <CardContent>
                 <Typography variant="subtitle1" fontWeight={600}>
                   {property.type}

@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CommonFields from '../../components/Add_Properties/CommonFields';
-import FlatFields from '../../components/Add_Properties/FlatFields';
+import BungalowFields from '../Add_Properties/BunglowFields';
 import ImageUpload from '../../components/Add_Properties/ImageUploadFields';
 import '../../add.css';
 
-const AddFlat = () => {
+
+const AddBungalow = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     // Common fields
@@ -19,28 +20,31 @@ const AddFlat = () => {
     pincode: '',
     status: 'Available',
     isAvailableForSale: true,
-    availableForRent: false,  // Match your backend field name
+    isAvailableForRent: false,
     
-    // Flat specific
+    // Bungalow specific
     type: '',
-    sqrft: '',
-    society: '',
-    floorNumber: '',
-    totalFloors: '',
-    parking: 0
+    area: '',
+    bedrooms: '',
+    bathrooms: '',
+    parking: 0,
+    amenities: ''
   });
 
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Get user ID on component mount
+  // Get user ID on component mount and verify login
   useEffect(() => {
     const userId = sessionStorage.getItem('id');
+    // const token = sessionStorage.getItem('token');
+    
     console.log('User ID from localStorage:', userId);
+    // console.log('Token exists:', !!token);
     
     if (!userId) {
-      alert('Please login first!');
+      alert('Please login first to add properties!');
       navigate('/login');
     }
   }, [navigate]);
@@ -60,12 +64,18 @@ const AddFlat = () => {
   const validateForm = () => {
     const newErrors = {};
     
+    // Validate required fields
     if (!formData.title.trim()) newErrors.title = 'Title is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.price || formData.price <= 0) newErrors.price = 'Valid price is required';
-    if (!formData.type) newErrors.type = 'Flat type is required';
-    if (!formData.sqrft || formData.sqrft <= 0) newErrors.sqrft = 'Valid area is required';
+    if (!formData.type) newErrors.type = 'Bungalow type is required';
+    if (!formData.area || formData.area <= 0) newErrors.area = 'Valid area is required';
+    if (!formData.location.trim()) newErrors.location = 'Location is required';
+    if (!formData.address.trim()) newErrors.address = 'Address is required';
+    if (!formData.city.trim()) newErrors.city = 'City is required';
     if (!formData.pincode || formData.pincode.length !== 6) newErrors.pincode = 'Valid 6-digit pincode is required';
+    if (!formData.bedrooms || formData.bedrooms <= 0) newErrors.bedrooms = 'Number of bedrooms is required';
+    if (!formData.bathrooms || formData.bathrooms <= 0) newErrors.bathrooms = 'Number of bathrooms is required';
     if (!image) newErrors.image = 'Property image is required';
 
     setErrors(newErrors);
@@ -87,66 +97,68 @@ const AddFlat = () => {
       
       // Get user ID from localStorage
       const userId = sessionStorage.getItem('id');
+      // const token = localStorage.getItem('token');
       
-      if (!userId) {
+      // Validate user ID
+      if (!userId || userId === 'null' || userId === 'undefined') {
         alert('User ID not found. Please login again.');
         navigate('/login');
         return;
       }
 
-      // Append all form fields
+      console.log('Sending with User ID:', userId);
+
+      // Append all form fields explicitly
       formDataToSend.append('title', formData.title);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('type', formData.type);
       formDataToSend.append('interiorType', formData.interiorType);
-      formDataToSend.append('sqrft', formData.sqrft);
+      formDataToSend.append('area', formData.area);
       formDataToSend.append('price', formData.price);
       formDataToSend.append('location', formData.location);
       formDataToSend.append('address', formData.address);
       formDataToSend.append('city', formData.city);
       formDataToSend.append('pincode', formData.pincode);
       formDataToSend.append('status', formData.status);
-      formDataToSend.append('society', formData.society);
-      formDataToSend.append('floorNumber', formData.floorNumber || 0);
-      formDataToSend.append('totalFloors', formData.totalFloors || 1);
+      formDataToSend.append('bedrooms', formData.bedrooms || 0);
+      formDataToSend.append('bathrooms', formData.bathrooms || 0);
       formDataToSend.append('parking', formData.parking || 0);
-      formDataToSend.append('availableForRent', formData.availableForRent);
+      formDataToSend.append('amenities', formData.amenities || '');
+      formDataToSend.append('isAvailableForRent', formData.isAvailableForRent);
       formDataToSend.append('isAvailableForSale', formData.isAvailableForSale);
-      formDataToSend.append('user', userId);  // Valid user ID
+      formDataToSend.append('user', userId);  // ✅ Valid user ID
       
       // Append image
       if (image) {
         formDataToSend.append('image', image);
       }
 
-      console.log('Sending data:', {
+      // Debug log
+      console.log('Form data being sent:', {
         title: formData.title,
         description: formData.description,
-        sqrft: formData.sqrft,
-        pincode: formData.pincode,
+        area: formData.area,
+        bedrooms: formData.bedrooms,
         userId: userId
       });
 
-      const response = await fetch('http://localhost:3000/flat/insertflat', {
+      const response = await fetch('http://localhost:3000/bunglow/insertbunglow', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
         body: formDataToSend
       });
 
       const data = await response.json();
 
       if (response.ok && data.success) {
-        alert('Flat added successfully!');
+        alert('Bungalow added successfully!');
         navigate('/seller/my-properties');
       } else {
-        alert(data.message || 'Failed to add flat');
+        alert(data.message || 'Failed to add bungalow');
         console.error('Server response:', data);
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error adding flat. Please try again.');
+      alert('Error adding bungalow. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -155,7 +167,7 @@ const AddFlat = () => {
   return (
     <div className="add-property-container">
       <div className="add-property-header">
-        <h2>Add New Flat</h2>
+        <h2>Add New Bungalow</h2>
         <button 
           type="button" 
           onClick={() => navigate('/seller/add-property')}
@@ -173,8 +185,8 @@ const AddFlat = () => {
           errors={errors}
         />
 
-        {/* Flat Specific Fields */}
-        <FlatFields 
+        {/* Bungalow Specific Fields */}
+        <BungalowFields 
           formData={formData}
           handleChange={handleChange}
         />
@@ -193,7 +205,7 @@ const AddFlat = () => {
             className="btn-primary"
             disabled={loading}
           >
-            {loading ? 'Adding Flat...' : 'Add Flat'}
+            {loading ? 'Adding Bungalow...' : 'Add Bungalow'}
           </button>
           <button 
             type="button" 
@@ -208,4 +220,4 @@ const AddFlat = () => {
   );
 };
 
-export default AddFlat;
+export default AddBungalow;

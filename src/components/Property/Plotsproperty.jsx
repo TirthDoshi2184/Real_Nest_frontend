@@ -21,8 +21,8 @@ const PlotsProperty = () => {
     const fetchPlots = async () => {
       try {
         const response = await axios.get("http://localhost:3000/plot/getplot");
-        if (Array.isArray(response.data.data)) {
-          setPlots(response.data.data);
+        if (Array.isArray(response.data)) {
+          setPlots(response.data);
         } else {
           setError("Invalid data format received from API");
         }

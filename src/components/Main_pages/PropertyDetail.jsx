@@ -175,7 +175,7 @@ const PropertyDetail = () => {
           <h2 style={styles.sectionTitle}>Property Overview</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
             <img 
-              src={property?.flat?.imgUrl || "/api/placeholder/800/600"} 
+              src={property?.flat?.imageUrl || "/api/placeholder/800/600"} 
               alt={property?.flat?.society?.name}
               style={{ 
                 width: '100%', 
@@ -273,28 +273,7 @@ const PropertyDetail = () => {
         {/* Additional Sections (Dimensions, Neighborhood, Pricing, Security, Contact) can be added similarly */}
         
         {/* Contact Section */}
-        <section id="contact" style={styles.section}>
-          <h2 style={styles.sectionTitle}>Contact Information</h2>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <Phone style={{ color: '#2c5282', marginBottom: '10px' }} />
-              <p>Contact Number</p>
-              <strong>{property?.flat?.user?.mobileNo}</strong>
-            </div>
-            <button 
-              style={{
-                backgroundColor: '#2c5282',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              Contact Agent
-            </button>
-          </div>
-        </section>
+        
       </div>
     </div>
   );

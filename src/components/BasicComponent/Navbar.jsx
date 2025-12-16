@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   AppBar, 
   Toolbar, 
@@ -16,81 +16,87 @@ import {
 } from '@mui/material';
 import { 
   Home as HomeIcon, 
-  List as ListIcon, 
-  AddCircle as AddCircleIcon, 
   AccountCircle as ProfileIcon,
   Menu as MenuIcon,
   Close as CloseIcon,
   House as HouseIcon,
   Business as BusinessIcon,
-  LandscapeOutlined as LandscapeIcon
+  Villa as VillaIcon,
+  Person as PersonIcon,
+  QuestionAnswer as InquiryIcon,
+  Login as LoginIcon,
+  Logout as LogoutIcon
 } from '@mui/icons-material';
 
 export const Navbar = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
 
-  // Property Type Dropdown
-  const handlePropertiesMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePropertiesMenuClose = () => {
-    setAnchorEl(null);
-  };
+  // Check authentication status on component mount
+  useEffect(() => {
+    const userId = sessionStorage.getItem('id');
+    setIsAuthenticated(!!userId);
+  }, []);
 
   // Mobile Drawer Toggle
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  // Profile Menu Handlers
+  const handleProfileMenuOpen = (event) => {
+    setProfileMenuAnchor(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileMenuAnchor(null);
+  };
+
   // Authentication Handlers
   const handleLogin = () => {
-    window.location.href = '/login'; // Redirect to login page
+    handleProfileMenuClose();
+    window.location.href = '/login';
   };
 
   const handleLogout = () => {
-    // Clear authentication data (you can also add localStorage or sessionStorage logic)
+    sessionStorage.removeItem('id');
     setIsAuthenticated(false);
-    window.location.href = '/'; // Redirect to home page
+    handleProfileMenuClose();
+    window.location.href = '/';
   };
 
-  // Property Type Menu Items
-  const propertyTypes = [
-    { 
-      icon: <HouseIcon />, 
-      label: 'Flats', 
-      href: '/listproperty' 
-    },
-    { 
-      icon: <BusinessIcon />, 
-      label: 'Shops', 
-      href: '/shopproperty' 
-    },
-    { 
-      icon: <LandscapeIcon />, 
-      label: 'Plots', 
-    href: '/plotproperty' 
-    }
-  ];
+  const handleProfile = () => {
+    handleProfileMenuClose();
+    window.location.href = '/profile';
+  };
+
+  const handleInquiry = () => {
+    handleProfileMenuClose();
+    window.location.href = '/inquiry';
+  };
 
   // Navigation Links
   const navLinks = [
     { 
       label: 'Home', 
       icon: <HomeIcon />, 
-      href: '/' 
+      href: '/home' 
     },
     { 
-      label: 'Properties', 
-      icon: <ListIcon />, 
-      action: handlePropertiesMenuOpen 
+      label: 'Flats', 
+      icon: <HouseIcon />, 
+      href: '/listproperty' 
     },
     { 
-      label: 'Sell Property', 
-      icon: <AddCircleIcon />, 
-      href: '/addproperty' 
+      label: 'Shops', 
+      icon: <BusinessIcon />, 
+      href: '/shopproperty' 
+    },
+    { 
+      label: 'Bunglows', 
+      icon: <VillaIcon />, 
+      href: '/bunglowproperty' 
     }
   ];
 
@@ -112,7 +118,7 @@ export const Navbar = () => {
         bgcolor: 'primary.main',
         color: 'primary.contrastText'
       }}>
-        <Typography variant="h6">PropEase</Typography>
+        <Typography variant="h6">RealNest</Typography>
         <IconButton 
           color="inherit" 
           onClick={handleDrawerToggle}
@@ -125,43 +131,37 @@ export const Navbar = () => {
           <ListItem 
             key={link.label} 
             button 
-            onClick={link.href ? () => window.location.href = link.href : link.action}
+            onClick={() => {
+              window.location.href = link.href;
+              handleDrawerToggle();
+            }}
           >
             <ListItemIcon>{link.icon}</ListItemIcon>
             <ListItemText primary={link.label} />
           </ListItem>
         ))}
-        
-        {/* Property Types in Mobile Menu */}
-        <ListItem>
-          <ListItemText primary="Property Types" />
-        </ListItem>
-        {propertyTypes.map((property) => (
-          <ListItem 
-            key={property.label} 
-            button 
-            onClick={() => window.location.href = property.href}
-          >
-            <ListItemIcon>{property.icon}</ListItemIcon>
-            <ListItemText primary={property.label} />
-          </ListItem>
-        ))}
 
-        {/* Authentication */}
-        {isAuthenticated ? (
+        {/* Profile Section in Mobile */}
+        {isAuthenticated && (
           <>
-            <ListItem button onClick={() => window.location.href = '/profile'}>
-              <ListItemIcon><ProfileIcon /></ListItemIcon>
+            <ListItem button onClick={handleProfile}>
+              <ListItemIcon><PersonIcon /></ListItemIcon>
               <ListItemText primary="My Profile" />
             </ListItem>
+            <ListItem button onClick={handleInquiry}>
+              <ListItemIcon><InquiryIcon /></ListItemIcon>
+              <ListItemText primary="My Inquiry" />
+            </ListItem>
             <ListItem button onClick={handleLogout}>
-              <ListItemIcon><ProfileIcon /></ListItemIcon>
+              <ListItemIcon><LogoutIcon /></ListItemIcon>
               <ListItemText primary="Logout" />
             </ListItem>
           </>
-        ) : (
+        )}
+        
+        {!isAuthenticated && (
           <ListItem button onClick={handleLogin}>
-            <ListItemIcon><ProfileIcon /></ListItemIcon>
+            <ListItemIcon><LoginIcon /></ListItemIcon>
             <ListItemText primary="Login" />
           </ListItem>
         )}
@@ -173,7 +173,6 @@ export const Navbar = () => {
     <>
       <AppBar position="sticky" color="default" elevation={1}>
         <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* Mobile Menu Toggle */}
           <IconButton
             edge="start"
             color="inherit"
@@ -184,7 +183,6 @@ export const Navbar = () => {
             <MenuIcon />
           </IconButton>
 
-          {/* Logo */}
           <Typography 
             variant="h5" 
             component="div" 
@@ -194,84 +192,76 @@ export const Navbar = () => {
               color: 'primary.main'
             }}
           >
-           RealNest
+            RealNest
           </Typography>
 
-          {/* Desktop Navigation */}
           <Box sx={{ 
             display: { xs: 'none', md: 'flex' }, 
             alignItems: 'center',
             gap: 2
           }}>
             {navLinks.map((link) => (
-              link.href ? (
-                <Button 
-                  key={link.label} 
-                  startIcon={link.icon}
-                  onClick={() => window.location.href = link.href}
-                  color="inherit"
-                >
-                  {link.label}
-                </Button>
-              ) : (
-                <Button 
-                  key={link.label} 
-                  startIcon={link.icon}
-                  onClick={link.action}
-                  color="inherit"
-                >
-                  {link.label}
-                </Button>
-              )
+              <Button 
+                key={link.label} 
+                startIcon={link.icon}
+                onClick={() => window.location.href = link.href}
+                color="inherit"
+              >
+                {link.label}
+              </Button>
             ))}
           </Box>
 
-          {/* Authentication & Profile */}
           <Box>
-            {isAuthenticated ? (
-              <Button 
-                startIcon={<ProfileIcon />}
-                onClick={handleLogout}
-                color="primary"
-                variant="contained"
-              >
-                Logout
-              </Button>
-            ) : (
-              <Button 
-                startIcon={<ProfileIcon />}
-                onClick={handleLogin}
-                color="primary"
-                variant="contained"
-              >
-                Login
-              </Button>
-            )}
+            <Button 
+              startIcon={<ProfileIcon />}
+              onClick={handleProfileMenuOpen}
+              color="primary"
+              variant="contained"
+            >
+              {isAuthenticated ? 'Account' : 'Login'}
+            </Button>
           </Box>
         </Toolbar>
       </AppBar>
 
-      {/* Properties Type Dropdown Menu */}
+      {/* Profile Dropdown Menu */}
       <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handlePropertiesMenuClose}
+        anchorEl={profileMenuAnchor}
+        open={Boolean(profileMenuAnchor)}
+        onClose={handleProfileMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
       >
-        {propertyTypes.map((property) => (
-          <MenuItem 
-            key={property.label}
-            onClick={() => {
-              window.location.href = property.href;
-              handlePropertiesMenuClose();
-            }}
-          >
-            {property.icon}
-            <Typography sx={{ ml: 2 }}>{property.label}</Typography>
+        {isAuthenticated ? (
+          [
+            <MenuItem key="profile" onClick={handleProfile}>
+              <PersonIcon sx={{ mr: 2 }} />
+              <Typography>My Profile</Typography>
+            </MenuItem>,
+            <MenuItem key="inquiry" onClick={handleInquiry}>
+              <InquiryIcon sx={{ mr: 2 }} />
+              <Typography>My Inquiry</Typography>
+            </MenuItem>,
+            <MenuItem key="logout" onClick={handleLogout}>
+              <LogoutIcon sx={{ mr: 2 }} />
+              <Typography>Logout</Typography>
+            </MenuItem>
+          ]
+        ) : (
+          <MenuItem onClick={handleLogin}>
+            <LoginIcon sx={{ mr: 2 }} />
+            <Typography>Login</Typography>
           </MenuItem>
-        ))}
+        )}
       </Menu>
 
-      {/* Mobile Drawer */}
       <Drawer
         variant="temporary"
         anchor="left"
