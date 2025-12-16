@@ -245,7 +245,7 @@ const MyProperties = () => {
                 <p className="text-gray-600 mt-1">Manage and edit your property listings</p>
               </div>
               <button
-                onClick={() => window.location.href = '/add-property'}
+                onClick={() => window.location.href = '/addproperty'}
                 className="flex items-center gap-2 px-6 py-3 text-white rounded-lg font-semibold hover:opacity-90 shadow-lg transition-all"
                 style={{ backgroundColor: '#3a6ea5' }}
               >
