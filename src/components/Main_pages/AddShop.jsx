@@ -117,7 +117,7 @@ const AddShop = () => {
 
       if (response.ok) {
         alert('Shop added successfully!');
-        navigate('/seller/my-properties');
+        navigate('/MyProperties');
       } else {
         alert(data.message || 'Failed to add shop');
       }
@@ -174,7 +174,7 @@ const AddShop = () => {
           </button>
           <button 
             type="button" 
-            onClick={() => navigate('/seller/dashboard')}
+            onClick={() => navigate('/addproperty')}
             className="btn-secondary"
           >
             Cancel

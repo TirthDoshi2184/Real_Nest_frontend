@@ -151,7 +151,7 @@ const AddBungalow = () => {
 
       if (response.ok && data.success) {
         alert('Bungalow added successfully!');
-        navigate('/seller/my-properties');
+        navigate('/MyProperties');
       } else {
         alert(data.message || 'Failed to add bungalow');
         console.error('Server response:', data);
@@ -170,7 +170,7 @@ const AddBungalow = () => {
         <h2>Add New Bungalow</h2>
         <button 
           type="button" 
-          onClick={() => navigate('/seller/add-property')}
+          onClick={() => navigate('/addproperty')}
           className="btn-back"
         >
           ← Back
@@ -209,7 +209,7 @@ const AddBungalow = () => {
           </button>
           <button 
             type="button" 
-            onClick={() => navigate('/seller/dashboard')}
+            onClick={() => navigate('/addproperty')}
             className="btn-secondary"
           >
             Cancel

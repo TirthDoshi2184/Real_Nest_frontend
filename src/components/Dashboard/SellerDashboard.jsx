@@ -188,7 +188,7 @@ export const SellerDashboard = () => {
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-gray-800">Recent Properties</h3>
                 <button
-                  onClick={() => window.location.href = '/my-properties'}
+                  onClick={() => window.location.href = '/myproperties'}
                   className="text-blue-600 hover:text-blue-700 font-medium"
                 >
                   View All →

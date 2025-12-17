@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { motion } from 'framer-motion';
-import { FaBed, FaBath, FaRulerCombined, FaMapMarkerAlt, FaRegMoneyBillAlt } from 'react-icons/fa';
-import { BsHouseDoor, BsCheckCircle } from 'react-icons/bs';
+import { Search, MapPin, Home, Building2, Filter, X, Square, Bed, Bath, Car, Sparkles } from 'lucide-react';
 
 const BunglowDisplay = () => {
   const [bunglows, setBunglows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedBunglow, setSelectedBunglow] = useState(null);
-
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchBunglows = async () => {
@@ -22,17 +20,49 @@ const BunglowDisplay = () => {
         setBunglows(response.data.data);
         setLoading(false);
       } catch (err) {
-        setError('Failed to fetch bunglow data');
+        setError('Failed to fetch bungalow data');
         setLoading(false);
       }
     };
     fetchBunglows();
   }, []);
 
+  const filteredBunglows = bunglows.filter((bunglow) => {
+    const matchesSearch = [
+      bunglow?.title?.toLowerCase(),
+      bunglow?.description?.toLowerCase(),
+      bunglow?.location?.toLowerCase(),
+      bunglow?.city?.toLowerCase(),
+      bunglow?.type?.toLowerCase(),
+      bunglow?.address?.toLowerCase()
+    ].some(field => field?.includes(searchQuery.toLowerCase()));
+
+    const matchesType = filterType === 'all' || bunglow?.type?.toLowerCase() === filterType.toLowerCase();
+    const matchesStatus = filterStatus === 'all' || bunglow?.status?.toLowerCase() === filterStatus.toLowerCase();
+    
+    const matchesPrice = (!priceRange.min || bunglow?.price >= Number(priceRange.min)) &&
+                        (!priceRange.max || bunglow?.price <= Number(priceRange.max));
+
+    return matchesSearch && matchesType && matchesStatus && matchesPrice;
+  });
+
+  const bunglowTypes = ['All', 'Villa', 'Bungalow', 'Farmhouse', 'Duplex', 'Independent House'];
+  const statusTypes = ['All', 'Available', 'Sold', 'Reserved', 'Rented'];
+
+  const clearFilters = () => {
+    setFilterType('all');
+    setFilterStatus('all');
+    setPriceRange({ min: '', max: '' });
+    setSearchQuery('');
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#3a6ea5] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 font-semibold">Loading bungalows...</p>
+        </div>
       </div>
     );
   }
@@ -40,201 +70,252 @@ const BunglowDisplay = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <p className="text-red-500 text-xl">{error}</p>
+        <div className="bg-red-50 border-2 border-red-200 text-red-700 p-6 rounded-xl max-w-md">
+          <h3 className="font-bold text-lg mb-2">Error</h3>
+          <p>{error}</p>
+        </div>
       </div>
     );
   }
 
+  const BunglowCard = ({ bunglow }) => (
+    <Link to={`/pdetail/${bunglow._id}`} className="group">
+      <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+        <div className="relative h-64 overflow-hidden">
+          <img
+            src={bunglow.imgUrl}
+            alt={bunglow.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
+            <span className="bg-[#3a6ea5] text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+              {bunglow.status}
+            </span>
+            {bunglow.isAvailableForRent && (
+              <span className="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                For Rent
+              </span>
+            )}
+            {bunglow.isAvailableForSale && (
+              <span className="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                For Sale
+              </span>
+            )}
+          </div>
+          <div className="absolute top-4 right-4">
+            <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg">
+              <p className="text-[#3a6ea5] text-xl font-bold">₹{bunglow.price?.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-5">
+          <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-1 group-hover:text-[#3a6ea5] transition-colors">
+            {bunglow.title}
+          </h3>
+          
+          <div className="flex items-center text-gray-600 mb-3">
+            <MapPin className="w-4 h-4 mr-1 text-[#3a6ea5] flex-shrink-0" />
+            <span className="text-sm line-clamp-1">{bunglow.address}, {bunglow.city}</span>
+          </div>
+          
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2 h-10">
+            {bunglow.description}
+          </p>
+          
+          <div className="grid grid-cols-2 gap-3 mb-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-2">
+              <Square className="w-4 h-4 text-[#3a6ea5]" />
+              <span className="text-sm text-gray-700">{bunglow.area} sqft</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Home className="w-4 h-4 text-[#3a6ea5]" />
+              <span className="text-sm text-gray-700">{bunglow.type}</span>
+            </div>
+            {bunglow.bedrooms > 0 && (
+              <div className="flex items-center gap-2">
+                <Bed className="w-4 h-4 text-[#3a6ea5]" />
+                <span className="text-sm text-gray-700">{bunglow.bedrooms} Beds</span>
+              </div>
+            )}
+            {bunglow.bathrooms > 0 && (
+              <div className="flex items-center gap-2">
+                <Bath className="w-4 h-4 text-[#3a6ea5]" />
+                <span className="text-sm text-gray-700">{bunglow.bathrooms} Baths</span>
+              </div>
+            )}
+            {bunglow.parking > 0 && (
+              <div className="flex items-center gap-2 col-span-2">
+                <Car className="w-4 h-4 text-[#3a6ea5]" />
+                <span className="text-sm text-gray-700">{bunglow.parking} Parking</span>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-500">{bunglow.interiorType}</span>
+            <button className="bg-[#3a6ea5] text-white px-4 py-2 rounded-lg hover:bg-[#2d5682] transition-colors text-sm font-semibold">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <motion.section 
-        className="relative h-[50vh] bg-gradient-to-r from-blue-600 to-purple-600 overflow-hidden"
-        initial="hidden"
-        animate="visible"
-        variants={fadeIn}
-      >
-        <div className="absolute inset-0 bg-black opacity-40"></div>
-        <div className="relative container mx-auto px-4 h-full flex items-center">
-          <div className="text-white">
-            <motion.h1 
-              className="text-5xl font-bold mb-4"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
+      <div className="relative bg-gradient-to-r from-[#3a6ea5] to-[#2d5682] text-white">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="max-w-3xl">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">
               Discover Your Dream Bungalow
-            </motion.h1>
-            <motion.p 
-              className="text-xl"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              Explore our collection of luxurious properties
-            </motion.p>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Properties Grid */}
-      <section className="container mx-auto px-4 py-16">
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            visible: {
-              transition: {
-                staggerChildren: 0.2
-              }
-            }
-          }}
-        >
-          {bunglows.map((bunglow, index) => (
-            <motion.div
-              key={index}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-              variants={fadeIn}
-              whileHover={{ scale: 1.02 }}
-              onClick={() => setSelectedBunglow(bunglow)}
-            >
-              <div className="relative h-64">
-                <img 
-                  src={bunglow.imageUrl} 
-                  alt="Bungalow" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full">
-                  <span className="text-blue-600 font-semibold">{bunglow.status}</span>
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">{bunglow.type}</h3>
-                <div className="flex items-center mb-4">
-                  <FaRegMoneyBillAlt className="text-blue-600 mr-2" />
-                  <span className="text-xl font-bold text-blue-600">₹{bunglow.price}</span>
-                </div>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="flex items-center">
-                    <FaRulerCombined className="text-gray-500 mr-2" />
-                    <span>{bunglow.area} </span>
-                  </div>
-                  <div className="flex items-center">
-                    <BsHouseDoor className="text-gray-500 mr-2" />
-                    <span>{bunglow.interiorType}</span>
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-4 line-clamp-3">{bunglow.review}</p>
-                <div className="flex justify-between items-center">
-                  <span className={`px-3 py-1 rounded-full ${
-                    bunglow.isAvailableForRent === 'true' 
-                    ? 'bg-green-100 text-green-600' 
-                    : 'bg-red-100 text-red-600'
-                  }`}>
-                    {bunglow.isAvailableForRent === 'true' ? 'Available for Rent' : 'Not for Rent'}
-                  </span>
-                  <button 
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Add contact or booking logic
-                    }}
-                  >
-                    Contact
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* Selected Bunglow Modal */}
-      {selectedBunglow && (
-        <motion.div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          onClick={() => setSelectedBunglow(null)}
-        >
-          <motion.div 
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="relative">
-              <img 
-                src={selectedBunglow.imageUrl} 
-                alt="Bungalow" 
-                className="w-full h-[40vh] object-cover"
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 text-white/90">
+              Explore luxurious bungalows and villas in prime locations
+            </p>
+            
+            {/* Search Bar */}
+            <div className="bg-white rounded-2xl shadow-2xl p-2 flex items-center gap-2">
+              <Search className="w-6 h-6 text-gray-400 ml-4" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by location, type, or description..."
+                className="flex-1 px-4 py-4 text-gray-800 text-lg focus:outline-none"
               />
               <button 
-                className="absolute top-4 right-4 bg-white rounded-full p-2"
-                onClick={() => setSelectedBunglow(null)}
+                onClick={() => setShowFilters(!showFilters)}
+                className="bg-[#3a6ea5] text-white px-6 py-4 rounded-xl hover:bg-[#2d5682] transition-colors flex items-center gap-2 font-semibold"
               >
-                ✕
+                <Filter className="w-5 h-5" />
+                Filters
               </button>
             </div>
-            <div className="p-8">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-2">{selectedBunglow.type}</h2>
-                  <p className="text-xl text-blue-600 font-bold">₹{selectedBunglow.price}</p>
-                </div>
-                <span className={`px-4 py-2 rounded-full ${
-                  selectedBunglow.status === 'Available' 
-                  ? 'bg-green-100 text-green-600' 
-                  : 'bg-red-100 text-red-600'
-                }`}>
-                  {selectedBunglow.status}
-                </span>
-              </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-                <div className="flex items-center">
-                  <FaRulerCombined className="text-blue-600 text-xl mr-3" />
-                  <div>
-                    <p className="text-sm text-gray-500">Area</p>
-                    <p className="font-semibold">{selectedBunglow.area} sq ft</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <BsHouseDoor className="text-blue-600 text-xl mr-3" />
-                  <div>
-                    <p className="text-sm text-gray-500">Interior</p>
-                    <p className="font-semibold">{selectedBunglow.interiorType}</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <BsCheckCircle className="text-blue-600 text-xl mr-3" />
-                  <div>
-                    <p className="text-sm text-gray-500">Availability</p>
-                    <p className="font-semibold">
-                      {selectedBunglow.isAvailableForRent === 'true' ? 'Available for Rent' : 'Not for Rent'}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          </div>
+        </div>
+      </div>
 
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Description</h3>
-                <p className="text-gray-600">{selectedBunglow.review}</p>
-              </div>
-
-              <div className="flex space-x-4">
-                <button className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                  Schedule Visit
+      {/* Filters Panel */}
+      {showFilters && (
+        <div className="bg-white shadow-lg border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-800">Advanced Filters</h3>
+              <div className="flex gap-3">
+                <button
+                  onClick={clearFilters}
+                  className="text-[#3a6ea5] hover:text-[#2d5682] font-semibold flex items-center gap-2"
+                >
+                  <X className="w-4 h-4" />
+                  Clear All
                 </button>
-                <button className="flex-1 border-2 border-blue-600 text-blue-600 py-3 rounded-lg hover:bg-blue-50 transition-colors">
-                  Contact Agent
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
                 </button>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Bunglow Type */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Property Type</label>
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#3a6ea5] focus:outline-none"
+                >
+                  {bunglowTypes.map(type => (
+                    <option key={type} value={type.toLowerCase()}>{type}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#3a6ea5] focus:outline-none"
+                >
+                  {statusTypes.map(status => (
+                    <option key={status} value={status.toLowerCase()}>{status}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Min Price */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Min Price</label>
+                <input
+                  type="number"
+                  value={priceRange.min}
+                  onChange={(e) => setPriceRange({...priceRange, min: e.target.value})}
+                  placeholder="₹ 0"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#3a6ea5] focus:outline-none"
+                />
+              </div>
+
+              {/* Max Price */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Max Price</label>
+                <input
+                  type="number"
+                  value={priceRange.max}
+                  onChange={(e) => setPriceRange({...priceRange, max: e.target.value})}
+                  placeholder="₹ Any"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#3a6ea5] focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       )}
+
+      {/* Stats Bar */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <p className="text-gray-600">
+              <span className="font-bold text-[#3a6ea5] text-lg">{filteredBunglows.length}</span> bungalows found
+            </p>
+            <div className="flex items-center gap-2">
+              <Home className="w-5 h-5 text-[#3a6ea5]" />
+              <span className="text-sm font-semibold text-gray-700">Premium Properties</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bunglows Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {filteredBunglows.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredBunglows.map((bunglow) => (
+              <BunglowCard key={bunglow._id} bunglow={bunglow} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <Building2 className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">No Bungalows Found</h3>
+            <p className="text-gray-600 mb-6">Try adjusting your filters or search criteria</p>
+            <button
+              onClick={clearFilters}
+              className="bg-[#3a6ea5] text-white px-8 py-3 rounded-lg hover:bg-[#2d5682] transition-colors font-semibold"
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

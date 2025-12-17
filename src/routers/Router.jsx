@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
 import { UserSideBar } from "../components/user/UserSideBar";
 import React from "react";
 import { UserDashboard } from "../components/user/UserDashboard";
@@ -27,14 +27,39 @@ import BunglowDetail from "../components/Main_pages/BunglowDetail";
 import AddBungalow from "../components/Main_pages/AddBunglow";
 import ProfilePage from "../components/Main_pages/ProfilePage";
 import MyProperties from "../components/Main_pages/MyProperties";
+import AllProperties from "../components/Main_pages/All_Properties";
+import EditProperty from "../components/Main_pages/Edit_Property";
+import Navbar from "../components/BasicComponent/Navbar";
+import InquiryForm from "../components/Main_pages/Inquiry_Form";
+import MyInquiries from "../components/Main_pages/Buyer_Inquiry";
+import ReceivedInquiries from "../components/Main_pages/Seller_Inquiry";
+
+
+// Layout component with Navbar
+const Layout = () => {
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
+};
 
 
 const MainRouter = ({ children }) => {
   const routesData = createBrowserRouter([
     {
+      element: <Layout />,
+      children: [
+    {
       path: "/signup",
       element: <UserSignup />,
       errorElement: <h1>UserSignin Error 404</h1>
+    },
+    {
+      path:"/allproperties",
+      element:<AllProperties/>,
+      errorElement:<h1>All Properties 404</h1>
     },
     {
       path: "/listproperty",
@@ -114,6 +139,11 @@ const MainRouter = ({ children }) => {
       element:<MyProperties/>,
       errorElement:<h1>404</h1>
     },
+    {
+      path:"/editproperty/:propertyType/:id",
+      element:<EditProperty/>,
+      errorElement:<h1>404</h1>
+    },
         {
           path: "/dashboard",
           element: <UserDashboard />,
@@ -133,8 +163,23 @@ const MainRouter = ({ children }) => {
           path: "admindashboard",
           element:<AdminDashboard/>,
           errorElement:<h1>404</h1>
+        },
+        {
+          path:"/inquiry/:id",
+          element:<InquiryForm/>,
+          errorElement:<h1>404</h1>
+        },
+        {
+          path:"/my-inquiries",
+          element:<MyInquiries/>,
+          errorElement:<h1>404</h1>
+        },
+        {
+          path:"/received-inquiries",
+          element:<ReceivedInquiries/>,
+          errorElement:<h1>404</h1>
         }
-
+  ]}
       ]);
   return (
     <React.Fragment>

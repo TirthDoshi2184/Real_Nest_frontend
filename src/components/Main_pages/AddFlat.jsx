@@ -139,7 +139,7 @@ const AddFlat = () => {
 
       if (response.ok && data.success) {
         alert('Flat added successfully!');
-        navigate('/seller/my-properties');
+        navigate('/MyProperties');
       } else {
         alert(data.message || 'Failed to add flat');
         console.error('Server response:', data);
@@ -158,7 +158,7 @@ const AddFlat = () => {
         <h2>Add New Flat</h2>
         <button 
           type="button" 
-          onClick={() => navigate('/seller/add-property')}
+          onClick={() => navigate('/addproperty')}
           className="btn-back"
         >
           ← Back
@@ -197,7 +197,7 @@ const AddFlat = () => {
           </button>
           <button 
             type="button" 
-            onClick={() => navigate('/seller/dashboard')}
+            onClick={() => navigate('/addproperty')}
             className="btn-secondary"
           >
             Cancel

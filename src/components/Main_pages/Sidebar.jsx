@@ -11,9 +11,11 @@ import {
   X
 } from 'lucide-react';
 
+
 const SellerSidebar = ({ sidebarOpen, setSidebarOpen, activeTab }) => {
   const handleLogout = () => {
     sessionStorage.removeItem('id');
+    sessionStorage.removeItem('role');
     window.location.href = '/';
   };
 
@@ -40,7 +42,7 @@ const SellerSidebar = ({ sidebarOpen, setSidebarOpen, activeTab }) => {
       id: 'inquiries', 
       label: 'Inquiries', 
       icon: <MessageSquare size={20} />, 
-      path: '/inquiries' 
+      path: '/received-inquiries' 
     },
     { 
       id: 'profile', 

@@ -204,9 +204,9 @@ const getPropertyDetailPath = (propertyType, itemId) => {
     case 'flat':
       return `/pdetail/${itemId}`;
     case 'bunglow':
-      return `/bunglow/${itemId}`;
+      return `/pdetail/${itemId}`;
     case 'shop':
-      return `/shop-detail/${itemId}`;
+      return `/pdetail/${itemId}`;
     case 'plot':
       return `/plot-detail/${itemId}`;
     default:
@@ -241,7 +241,7 @@ const PropertyCard = ({ item, index, propertyType }) => (
       }}>
         <CardMedia
           component="img"
-          image={item.imageUrl || 'https://via.placeholder.com/400x300'}
+          image={item.imgUrl || 'https://via.placeholder.com/400x300'}
           alt={item.address || item.area}
           sx={{
             position: 'absolute',
@@ -353,43 +353,50 @@ const SearchSection = () => (
 );
 
 const FeaturedCategories = () => (
-  <Box sx={{ py: 8, backgroundColor: '#f5f5f5' }}>
-    <Container>
-      <Typography variant="h4" align="center" sx={{ mb: 6 }}>
-        Browse by Property Type
-      </Typography>
-      <Grid container spacing={4}>
-        {[
-          { title: 'Residential Flats', icon: '🏢', count: '500+' },
-          { title: 'Luxury Bunglows', icon: '🏠', count: '200+' },
-          { title: 'Commercial Shops', icon: '🏪', count: '150+' },
-          { title: 'Premium Plots', icon: '📍', count: '100+' }
-        ].map((category, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              data-aos="zoom-in"
-              data-aos-delay={index * 100}
-            >
-              <Card sx={{
+  <Box sx={{ py: 3, backgroundColor: '#f5f5f5' }}>
+  <Container>
+    <Typography variant="h4" align="center" sx={{ mb: 6 }}>
+      Browse by Property Type
+    </Typography>
+    <Grid container spacing={2}>
+      {[
+        { title: 'Residential Flats', icon: '🏢', count: '5+' },
+        { title: 'Luxury Bunglows', icon: '🏠', count: '5+' },
+        { title: 'Commercial Shops', icon: '🏪', count: '4+' },
+      ].map((category, index) => (
+        <Grid item xs={12} sm={6} md={4} key={index}>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            data-aos="zoom-in"
+            data-aos-delay={index * 100}
+          >
+            <Card
+              sx={{
                 textAlign: 'center',
                 p: 3,
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                cursor: 'pointer'
-              }}>
-                <Typography variant="h2" sx={{ mb: 2 }}>{category.icon}</Typography>
-                <Typography variant="h6" sx={{ mb: 1 }}>{category.title}</Typography>
-                <Typography variant="body1" color="primary.main">{category.count} listings</Typography>
-              </Card>
-            </motion.div>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
-  </Box>
+                cursor: 'pointer',
+              }}
+            >
+              <Typography variant="h2" sx={{ mb: 2 }}>
+                {category.icon}
+              </Typography>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                {category.title}
+              </Typography>
+              <Typography variant="body1" color="primary.main">
+                {category.count} listings
+              </Typography>
+            </Card>
+          </motion.div>
+        </Grid>
+      ))}
+    </Grid>
+  </Container>
+</Box>
 );
 
 const Testomorial = () => (
@@ -493,7 +500,7 @@ const HomePage = ({ title, subtitle, type }) => {
   };
 
   const handleLearnMore = () => {
-    navigate('/aboutus');
+    navigate('/');
   };
 
   return (
@@ -527,12 +534,14 @@ const HomePage = ({ title, subtitle, type }) => {
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
               <Button
-                variant="contained"
-                size="large"
-                sx={{ px: 4, py: 1.5 }}
-              >
-                Start Exploring
-              </Button>
+  variant="contained"
+  size="large"
+  sx={{ px: 4, py: 1.5 }}
+  onClick={() => navigate("/allproperties")}
+>
+  Start Exploring
+</Button>
+
               <Button
                 variant="outlined"
                 size="large"

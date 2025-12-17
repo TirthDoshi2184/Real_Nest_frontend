@@ -9,18 +9,19 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt'; // Import the signup icon
+import Alert from '@mui/material/Alert'; 
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" to="/">
-        PrimeProperty Explorer
+        RealNest
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -34,33 +35,57 @@ export default function UserLogin() {
   const navigate = useNavigate();
   const [user, setuser] = React.useState({});
   const { register, handleSubmit } = useForm();
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const location = useLocation();
+  const from = location.state?.from;
+
+ 
+
 
   const submithandle = async (data) => {
-    try {
-      const userObj = Object.assign({}, data);
-      const userDetails = await axios.post("http://localhost:3000/user/login", userObj);
-  
-      if (userDetails.status === 200) {
-        sessionStorage.setItem("id", userDetails.data.user._id); // Save user ID to session storage
-        switch (userDetails.data.user.role) {
-          case "Seller":
-            navigate("/sellerdashboard");
-            break;
-          case "Buyer":
-            navigate("/home");
-            break;
-          case "Admin":
-            navigate("/user/admindashboard");
-            break;
-          default:
-            break;
-        }
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-  };
-  
+  try {
+    setErrorMessage(''); // Clear any previous errors
+    const userObj = Object.assign({}, data);
+    const userDetails = await axios.post("http://localhost:3000/user/login", userObj);
+
+    if (userDetails.status === 200) {
+  sessionStorage.setItem("id", userDetails.data.user._id);
+  sessionStorage.setItem("role", userDetails.data.user.role);
+  sessionStorage.setItem("fullName", userDetails.data.user.fullname);
+  sessionStorage.setItem("email", userDetails.data.user.email);
+  sessionStorage.setItem("phone", userDetails.data.user.mobileNo);
+
+  // ✅ If user came from protected page, go back there
+  if (from) {
+    navigate(from, { replace: true });
+    return;
+  }
+
+  // ✅ Otherwise fallback by role
+  switch (userDetails.data.user.role) {
+    case "Seller":
+      navigate("/sellerdashboard");
+      break;
+    case "Buyer":
+      navigate("/home");
+      break;
+    case "Admin":
+      navigate("/admindashboard");
+      break;
+    default:
+      navigate("/");
+  }
+}
+
+  } catch (error) {
+    console.error("Login failed:", error);
+    // Set error message from server response or use a default message
+    setErrorMessage(
+      error.response?.data?.message || 
+      "Login failed. Please check your credentials and try again."
+    );
+  }
+};
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -78,10 +103,14 @@ export default function UserLogin() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Login
-          </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit(submithandle)} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
+  Login
+</Typography>
+{errorMessage && (
+  <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+    {errorMessage}
+  </Alert>
+)}
+<Box component="form" noValidate onSubmit={handleSubmit(submithandle)} sx={{ mt: 3 }}>            <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
                   required

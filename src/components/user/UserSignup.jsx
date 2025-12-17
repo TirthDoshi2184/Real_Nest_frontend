@@ -81,7 +81,7 @@ export default function UserSignup() {
                   fullWidth
                   id="firstName"
                   label="First Name"
-                  {...register('firstname')}
+                  {...register('fullname')}
                   autoFocus
                 />
               </Grid>
@@ -93,7 +93,7 @@ export default function UserSignup() {
                   label="mobile"
                   name="mobile"
                   autoComplete="family-name"
-                  {...register('mobile')}
+                  {...register('mobileNo')}
                 />
               </Grid>
               <Grid item xs={12}>

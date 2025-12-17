@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, TextField, Typography, Card, CardContent, CardMedia, Button, Tabs, Tab } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { changeCity } from '../Redux/CitySlice';
+import { Search, MapPin, Home, Building2, TrendingUp, Filter, X, Bed, Bath, Square, ParkingSquare, Layers } from 'lucide-react';
 
 const Flatproperty = () => {
   const [properties, setProperties] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState(0);
   const [filterType, setFilterType] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [showFilters, setShowFilters] = useState(false);
   const selectedCity = useSelector((state) => state.city.city);
   const dispatch = useDispatch();
 
@@ -30,247 +31,263 @@ const Flatproperty = () => {
 
   const filteredProperties = properties.filter((property) => {
     const matchesSearch = [
-      property?.price?.toString(),
-      property?.type,
-      property?.location
-    ].some(field => field?.toLowerCase().includes(searchQuery.toLowerCase()));
+      property?.title?.toLowerCase(),
+      property?.description?.toLowerCase(),
+      property?.location?.toLowerCase(),
+      property?.city?.toLowerCase(),
+      property?.type?.toLowerCase(),
+      property?.address?.toLowerCase()
+    ].some(field => field?.includes(searchQuery.toLowerCase()));
 
-    const matchesFilter = filterType === 'all' || property?.type?.toLowerCase() === filterType;
-    return matchesSearch && matchesFilter;
+    const matchesType = filterType === 'all' || property?.type?.toLowerCase() === filterType.toLowerCase();
+    const matchesStatus = filterStatus === 'all' || property?.status?.toLowerCase() === filterStatus.toLowerCase();
+    
+    const matchesPrice = (!priceRange.min || property?.price >= Number(priceRange.min)) &&
+                        (!priceRange.max || property?.price <= Number(priceRange.max));
+
+    return matchesSearch && matchesType && matchesStatus && matchesPrice;
   });
 
-  const categories = ['All', 'Apartment', 'House', 'Villa', 'Luxury'];
-  const featuredProperties = properties.slice(0, 3);
-  const recentProperties = [...properties].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4);
+  const propertyTypes = ['All', 'Apartment', 'House', 'Villa', 'Penthouse', 'Studio'];
+  const statusTypes = ['All', 'Available', 'Sold', 'Reserved', 'Rented'];
+
+  const clearFilters = () => {
+    setFilterType('all');
+    setFilterStatus('all');
+    setPriceRange({ min: '', max: '' });
+    setSearchQuery('');
+  };
+
+  const PropertyCard = ({ property }) => (
+    <Link to={`/pdetail/${property._id}`} className="group">
+      <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+        <div className="relative h-64 overflow-hidden">
+          <img
+            src={property.imgUrl}
+            alt={property.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
+            <span className="bg-[#3a6ea5] text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+              {property.status}
+            </span>
+            {property.availableForRent && (
+              <span className="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                For Rent
+              </span>
+            )}
+          </div>
+          <div className="absolute top-4 right-4">
+            <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg">
+              <p className="text-[#3a6ea5] text-xl font-bold">₹{property.price?.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-5">
+          <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-1 group-hover:text-[#3a6ea5] transition-colors">
+            {property.title}
+          </h3>
+          
+          <div className="flex items-center text-gray-600 mb-3">
+            <MapPin className="w-4 h-4 mr-1 text-[#3a6ea5]" />
+            <span className="text-sm line-clamp-1">{property.address}, {property.city}</span>
+          </div>
+          
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2 h-10">
+            {property.description}
+          </p>
+          
+          <div className="grid grid-cols-2 gap-3 mb-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-2">
+              <Square className="w-4 h-4 text-[#3a6ea5]" />
+              <span className="text-sm text-gray-700">{property.sqrft} sqft</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Home className="w-4 h-4 text-[#3a6ea5]" />
+              <span className="text-sm text-gray-700">{property.type}</span>
+            </div>
+            {property.floorNumber > 0 && (
+              <div className="flex items-center gap-2">
+                <Layers className="w-4 h-4 text-[#3a6ea5]" />
+                <span className="text-sm text-gray-700">Floor {property.floorNumber}/{property.totalFloors}</span>
+              </div>
+            )}
+            {property.parking > 0 && (
+              <div className="flex items-center gap-2">
+                <ParkingSquare className="w-4 h-4 text-[#3a6ea5]" />
+                <span className="text-sm text-gray-700">{property.parking} Parking</span>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-500">{property.interiorType}</span>
+            <button className="bg-[#3a6ea5] text-white px-4 py-2 rounded-lg hover:bg-[#2d5682] transition-colors text-sm font-semibold">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <Box sx={{
-        height: '70vh',
-        background: 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("/hero-bg.jpg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        display: 'flex',
-        alignItems: 'center',
-        position: 'relative'
-      }}>
-        <Container maxWidth="lg">
-          <Box sx={{ maxWidth: 600, color: 'white' }}>
-            <Typography variant="h2" sx={{ fontWeight: 800, mb: 3 }}>
-              Find Your Perfect Home
-            </Typography>
-            <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
-              Discover the most luxurious and comfortable properties
-            </Typography>
-            <TextField
-              fullWidth
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search properties..."
-              sx={{
-                bgcolor: 'white',
-                borderRadius: 2,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
-              }}
-            />
-          </Box>
-        </Container>
-      </Box>
-
-      {/* Featured Properties */}
-      <Container maxWidth="lg" sx={{ my: 8 }}>
-        <Typography variant="h4" sx={{ mb: 4, fontWeight: 700 }}>
-          Featured Properties
-        </Typography>
-        <Box sx={{
-          display: 'grid',
-          gridTemplateColumns: { md: 'repeat(3, 1fr)' },
-          gap: 4
-        }}>
-          {featuredProperties.map((property) => (
-            <Card key={property._id} sx={{
-              borderRadius: 4,
-              overflow: 'hidden',
-              transition: 'all 0.3s',
-              '&:hover': {
-                transform: 'translateY(-8px)',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-              }
-            }}>
-              <Box sx={{ position: 'relative' }}>
-              <CardMedia
-  component="img"
-  height="300"                    // Increased from 250px for better showcase
-  width="100%"                    // Ensures full width
-  image={property.imageUrl}
-  alt={property.type}
-  sx={{
-    objectFit: 'cover',          // Ensures image covers area without distortion
-    aspectRatio: '16/9',         // Maintains consistent aspect ratio
-  }}
-/>
-                <Box sx={{
-                  position: 'absolute',
-                  top: 16,
-                  right: 16,
-                  bgcolor: 'primary.main',
-                  color: 'white',
-                  px: 2,
-                  py: 0.5,
-                  borderRadius: 2
-                }}>
-                  Featured
-                </Box>
-              </Box>
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" fontWeight={600} gutterBottom>
-                  {property.type}
-                </Typography>
-                <Typography color="text.secondary" gutterBottom>
-                  {property.location}
-                </Typography>
-                <Typography variant="h5" color="primary" fontWeight={700} sx={{ mb: 2 }}>
-                  ₹{property.price?.toLocaleString()}
-                </Typography>
-                <Link to={`/pdetail/${property._id}`} style={{ textDecoration: 'none' }}>
-                  <Button fullWidth variant="contained">
-                    View Details
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-      </Container>
-
-      {/* Categories Section */}
-      <Box sx={{ bgcolor: 'white', py: 8 }}>
-        <Container maxWidth="lg">
-          <Typography variant="h4" sx={{ mb: 4, fontWeight: 700 }}>
-            Browse by Category
-          </Typography>
-          <Tabs
-            value={activeTab}
-            onChange={(_, newValue) => {
-              setActiveTab(newValue);
-              setFilterType(categories[newValue].toLowerCase());
-            }}
-            sx={{ mb: 4 }}
-          >
-            {categories.map((category, index) => (
-              <Tab
-                key={category}
-                label={category}
-                sx={{
-                  fontSize: '1rem',
-                  fontWeight: 500,
-                  '&.Mui-selected': {
-                    color: 'primary.main'
-                  }
-                }}
+      <div className="relative bg-gradient-to-r from-[#3a6ea5] to-[#2d5682] text-white">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="max-w-3xl">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">
+              Find Your Dream Property
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 text-white/90">
+              Discover premium properties tailored to your lifestyle
+            </p>
+            
+            {/* Search Bar */}
+            <div className="bg-white rounded-2xl shadow-2xl p-2 flex items-center gap-2">
+              <Search className="w-6 h-6 text-gray-400 ml-4" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by location, type, or description..."
+                className="flex-1 px-4 py-4 text-gray-800 text-lg focus:outline-none"
               />
-            ))}
-          </Tabs>
-          <Box sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'repeat(2, 1fr)',
-              md: 'repeat(3, 1fr)',
-              lg: 'repeat(4, 1fr)'
-            },
-            gap: 3
-          }}>
-            {filteredProperties.map((property) => (
-              <Card key={property._id} sx={{
-                borderRadius: 3,
-                overflow: 'hidden',
-                transition: 'all 0.3s',
-                '&:hover': {
-                  transform: 'translateY(-8px)',
-                  boxShadow: '0 12px 24px rgba(0,0,0,0.1)'
-                }
-              }}>
-                <CardMedia
-  component="img"
-  height="240"                    // Adjusted from 200px for better visibility
-  width="100%"
-  image={property.imageUrl}
-  alt={property.type}
-  sx={{
-    objectFit: 'cover',
-    aspectRatio: '4/3',          // Slightly more square ratio for property display
-  }}
-/>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {property.type}
-                  </Typography>
-                  <Typography color="text.secondary" gutterBottom>
-                    {property.location}
-                  </Typography>
-                  <Typography variant="h6" color="primary.main" fontWeight={600} gutterBottom>
-                    ₹{property.price?.toLocaleString()}
-                  </Typography>
-                  <Link to={`/pdetail/${property._id}`} style={{ textDecoration: 'none' }}>
-                    <Button fullWidth variant="outlined" sx={{ mt: 1 }}>
-                      View Details
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
-        </Container>
-      </Box>
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className="bg-[#3a6ea5] text-white px-6 py-4 rounded-xl hover:bg-[#2d5682] transition-colors flex items-center gap-2 font-semibold"
+              >
+                <Filter className="w-5 h-5" />
+                Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* Recent Properties */}
-      <Container maxWidth="lg" sx={{ my: 8 }}>
-        <Typography variant="h4" sx={{ mb: 4, fontWeight: 700 }}>
-          Recent Properties
-        </Typography>
-        <Box sx={{
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(4, 1fr)'
-          },
-          gap: 3
-        }}>
-          {recentProperties.map((property) => (
-            <Card key={property._id} sx={{
-              borderRadius: 3,
-              overflow: 'hidden'
-            }}>
-              <CardMedia
-  component="img"
-  height="200"                    // Adjusted from 160px for consistency
-  width="100%"
-  image={property.imageUrl}
-  alt={property.type}
-  sx={{
-    objectFit: 'cover',
-    aspectRatio: '3/2',
-  }}
-/>
-              <CardContent>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {property.type}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {property.location}
-                </Typography>
-                <Typography variant="h6" color="primary" sx={{ mt: 1 }}>
-                  ₹{property.price?.toLocaleString()}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-      </Container>
-    </Box>
+      {/* Filters Panel */}
+      {showFilters && (
+        <div className="bg-white shadow-lg border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-800">Advanced Filters</h3>
+              <div className="flex gap-3">
+                <button
+                  onClick={clearFilters}
+                  className="text-[#3a6ea5] hover:text-[#2d5682] font-semibold flex items-center gap-2"
+                >
+                  <X className="w-4 h-4" />
+                  Clear All
+                </button>
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Property Type */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Property Type</label>
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#3a6ea5] focus:outline-none"
+                >
+                  {propertyTypes.map(type => (
+                    <option key={type} value={type.toLowerCase()}>{type}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#3a6ea5] focus:outline-none"
+                >
+                  {statusTypes.map(status => (
+                    <option key={status} value={status.toLowerCase()}>{status}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Min Price */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Min Price</label>
+                <input
+                  type="number"
+                  value={priceRange.min}
+                  onChange={(e) => setPriceRange({...priceRange, min: e.target.value})}
+                  placeholder="₹ 0"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#3a6ea5] focus:outline-none"
+                />
+              </div>
+
+              {/* Max Price */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Max Price</label>
+                <input
+                  type="number"
+                  value={priceRange.max}
+                  onChange={(e) => setPriceRange({...priceRange, max: e.target.value})}
+                  placeholder="₹ Any"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#3a6ea5] focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stats Bar */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <p className="text-gray-600">
+              <span className="font-bold text-[#3a6ea5] text-lg">{filteredProperties.length}</span> properties found
+            </p>
+            {selectedCity && (
+              <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
+                <MapPin className="w-4 h-4 text-[#3a6ea5]" />
+                <span className="text-sm font-semibold text-gray-700">{selectedCity}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Properties Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {filteredProperties.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProperties.map((property) => (
+              <PropertyCard key={property._id} property={property} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <Building2 className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">No Properties Found</h3>
+            <p className="text-gray-600 mb-6">Try adjusting your filters or search criteria</p>
+            <button
+              onClick={clearFilters}
+              className="bg-[#3a6ea5] text-white px-8 py-3 rounded-lg hover:bg-[#2d5682] transition-colors font-semibold"
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { 
   AppBar, 
@@ -29,6 +30,17 @@ import {
 } from '@mui/icons-material';
 
 export const Navbar = () => {
+const location = useLocation();
+  const userRole = sessionStorage.getItem('role');  
+  const hideNavbar = userRole === 'Seller' || 
+                     location.pathname.startsWith('/sellerdashboard') ||
+                     location.pathname.startsWith('/addproperty') ||
+                     location.pathname.startsWith('/MyProperties') ||
+                     location.pathname.startsWith('/editproperty');
+  
+  if (hideNavbar) {
+    return null; // Don't render navbar
+  }
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
@@ -61,6 +73,11 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem('id');
+    sessionStorage.removeItem('role');
+    sessionStorage.removeItem('fullName');
+    sessionStorage.removeItem('email');
+    sessionStorage.removeItem('phone');
+
     setIsAuthenticated(false);
     handleProfileMenuClose();
     window.location.href = '/';
@@ -73,7 +90,7 @@ export const Navbar = () => {
 
   const handleInquiry = () => {
     handleProfileMenuClose();
-    window.location.href = '/inquiry';
+    window.location.href = '/my-inquiries';
   };
 
   // Navigation Links

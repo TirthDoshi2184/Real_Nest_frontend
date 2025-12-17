@@ -56,15 +56,15 @@ const MyProperties = () => {
   };
 
   const handleDelete = async (id, type) => {
-    if (!window.confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
-      return;
-    }
+  if (!window.confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+    return;
+  }
 
-    try {
-      const endpoint = type === 'flat' ? 'flats' : type === 'shop' ? 'shops' : 'bunglows';
-      const response = await fetch(`http://localhost:3000/seller/${endpoint}/${id}`, {
-        method: 'DELETE'
-      });
+  try {
+    const endpoint = type === 'flat' ? 'flat/deleteflat' : type === 'shop' ? 'shop/deleteshop' : 'bunglow/deletebunglow';
+    const response = await fetch(`http://localhost:3000/${endpoint}/${id}`, {
+      method: 'DELETE'
+    });
 
       const result = await response.json();
 
@@ -81,9 +81,8 @@ const MyProperties = () => {
   };
 
   const handleEdit = (id, type) => {
-    const editRoute = type === 'flat' ? 'edit-flat' : type === 'shop' ? 'edit-shop' : 'edit-bunglow';
-    window.location.href = `/${editRoute}/${id}`;
-  };
+  window.location.href = `/editproperty/${type}/${id}`;
+};
 
   // Filter properties based on active tab and search query
   const filteredProperties = properties.filter(property => {
@@ -244,14 +243,14 @@ const MyProperties = () => {
                 <h1 className="text-3xl font-bold text-gray-800">My Properties</h1>
                 <p className="text-gray-600 mt-1">Manage and edit your property listings</p>
               </div>
-              <button
+              {/* <button
                 onClick={() => window.location.href = '/addproperty'}
                 className="flex items-center gap-2 px-6 py-3 text-white rounded-lg font-semibold hover:opacity-90 shadow-lg transition-all"
                 style={{ backgroundColor: '#3a6ea5' }}
               >
                 <PlusCircle size={20} />
                 Add New Property
-              </button>
+              </button> */}
             </div>
 
             {/* Search and Filter Bar */}
