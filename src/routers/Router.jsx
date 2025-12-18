@@ -1,7 +1,7 @@
 import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
-import { UserSideBar } from "../components/user/UserSideBar";
+// import { UserSideBar } from "../components/user/UserSideBar";
 import React from "react";
-import { UserDashboard } from "../components/user/UserDashboard";
+// import { UserDashboard } from "../components/user/UserDashboard";
 import UserLogin from "../components/user/UserLogin";
 import UserSignup from "../components/user/UserSignup";
 import { SellerDashboard } from "../components/Dashboard/SellerDashboard";
@@ -13,17 +13,17 @@ import HomePage from "../components/Main_pages/Home";
 // import {AdminDashboard} from "../components/Dashboard/AdminDashboard";
 import Flatproperty from "../components/Property/Flatproperty";
 import ShopProperty from "../components/Property/Shopproperty";
-import PlotsProperty from "../components/Property/Plotsproperty";
+// import PlotsProperty from "../components/Property/Plotsproperty";
 import PropertyTypeSelection from "../components/Main_pages/PropertyTypeSelection";
 import AddFlat from "../components/Main_pages/AddFlat";
 import AddShop from "../components/Main_pages/AddShop";
 import AboutPage from "../components/Main_pages/AboutUs";
 import { Error } from "@mui/icons-material";
-import AdminDashboard from "../components/Dashboard/AdminDashboard";
-import FlatForm from "../components/Main_pages/FlatForm";
-import ShopForm from "../components/Main_pages/ShopForm";
+// import AdminDashboard from "../components/Dashboard/AdminDashboard";
+// import FlatForm from "../components/Main_pages/FlatForm";
+// import ShopForm <fr></fr>om "../components/Main_pages/ShopForm";
 import BunglowDisplay from "../components/Property/BunglowProperty";
-import BunglowDetail from "../components/Main_pages/BunglowDetail";
+// import BunglowDetail from "../components/Main_pages/BunglowDetail";
 import AddBungalow from "../components/Main_pages/AddBunglow";
 import ProfilePage from "../components/Main_pages/ProfilePage";
 import MyProperties from "../components/Main_pages/MyProperties";
@@ -71,28 +71,27 @@ const MainRouter = ({ children }) => {
       element:<ShopProperty/>,
       errorElement:<h1>Shops Property 404</h1>
     },
-    {
-      path:"/plotproperty",
-      element:<PlotsProperty/>,
-      errorElement:<h1>Plots Property 404</h1>
-    },
-    {
-      path:"/bunglowproperty",
-      element:<BunglowDisplay/>,
-      errorElement:<h1>Bunglow Property 404</h1>
-
-    },
+    // {
+    //   path:"/plotproperty",
+    //   element:<PlotsProperty/>,
+    //   errorElement:<h1>Plots Property 404</h1>
+    // },
+    // {
+    //   path:"/bunglowproperty",
+    //   element:<BunglowDisplay/>,
+    //   errorElement:<h1>Bunglow Property 404</h1>
+    // },
     {
       path: "/pdetail/:id",
       element: <PropertyDetail />,
       errorElement: <h1>PropertyDetail Error 404</h1>
     },
-    {
-      path:"/bunglow/:id",
-      element:<BunglowDetail/>,
-      errorElement: <h1>BunglowDetail Error 404</h1>
+    // {
+    //   path:"/bunglow/:id",
+    //   element:<BunglowDetail/>,
+    //   errorElement: <h1>BunglowDetail Error 404</h1>
 
-    },
+    // },
     {
       path:"/",
       element:<AboutPage/>,
@@ -144,26 +143,26 @@ const MainRouter = ({ children }) => {
       element:<EditProperty/>,
       errorElement:<h1>404</h1>
     },
-        {
-          path: "/dashboard",
-          element: <UserDashboard />,
-          errorElement: <h1>404</h1>,
-        },
+        // {
+        //   path: "/dashboard",
+        //   element: <UserDashboard />,
+        //   errorElement: <h1>404</h1>,
+        // },
         {
           path: "/sellerdashboard",
           element:<SellerDashboard/>,
           errorElement:<h1>404</h1>
         },
-        {
-          path: "/buyerdashboard",
-          element:<BuyerDashboard/>,
-          errorElement:<h1>404</h1>
-        },
-        {
-          path: "admindashboard",
-          element:<AdminDashboard/>,
-          errorElement:<h1>404</h1>
-        },
+        // {
+        //   path: "/buyerdashboard",
+        //   element:<BuyerDashboard/>,
+        //   errorElement:<h1>404</h1>
+        // },
+        // {
+        //   path: "admindashboard",
+        //   element:<AdminDashboard/>,
+        //   errorElement:<h1>404</h1>
+        // },
         {
           path:"/inquiry/:id",
           element:<InquiryForm/>,

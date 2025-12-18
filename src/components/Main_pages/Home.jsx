@@ -462,7 +462,6 @@ const HomePage = ({ title, subtitle, type }) => {
           axios.get('http://localhost:3000/flat/getflat'),
           axios.get('http://localhost:3000/shop/getshop'),
           axios.get('http://localhost:3000/bunglow/getbunglow'),
-          axios.get('http://localhost:3000/plot/getplot')
         ]);
 
         setProperties(flatsRes.data.data);
