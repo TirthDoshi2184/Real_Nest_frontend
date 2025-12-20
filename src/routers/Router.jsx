@@ -76,11 +76,11 @@ const MainRouter = ({ children }) => {
     //   element:<PlotsProperty/>,
     //   errorElement:<h1>Plots Property 404</h1>
     // },
-    // {
-    //   path:"/bunglowproperty",
-    //   element:<BunglowDisplay/>,
-    //   errorElement:<h1>Bunglow Property 404</h1>
-    // },
+    {
+      path:"/bunglowproperty",
+      element:<BunglowDisplay/>,
+      errorElement:<h1>Bunglow Property 404</h1>
+    },
     {
       path: "/pdetail/:id",
       element: <PropertyDetail />,
