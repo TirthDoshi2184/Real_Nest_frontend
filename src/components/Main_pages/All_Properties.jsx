@@ -30,6 +30,7 @@ export default function AllProperties() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all'); // all, flats, bunglows, shops
+const [availabilityFilter, setAvailabilityFilter] = useState('all'); // Add this line: all, rent, sale
 
   useEffect(() => {
     fetchAllProperties();
@@ -64,9 +65,22 @@ export default function AllProperties() {
   };
 
   const getFilteredProperties = () => {
-    if (filter === 'all') return properties;
-    return properties.filter(p => p.propertyType.toLowerCase() === filter);
-  };
+  let filtered = properties;
+  
+  // Filter by property type
+  if (filter !== 'all') {
+    filtered = filtered.filter(p => p.propertyType.toLowerCase() === filter);
+  }
+  
+  // Filter by availability (rent/sale)
+  if (availabilityFilter === 'rent') {
+    filtered = filtered.filter(p => p.isAvailableForRent || p.availableForRent || p.IsAvailableForRent);
+  } else if (availabilityFilter === 'sale') {
+    filtered = filtered.filter(p => p.isAvailableForSale);
+  }
+  
+  return filtered;
+};
 
   const filteredProperties = getFilteredProperties();
 
@@ -183,6 +197,53 @@ export default function AllProperties() {
             </Button>
           </ButtonGroup>
         </Box>
+        {/* Availability Filter Buttons */}
+<Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+  <ButtonGroup variant="outlined" sx={{ boxShadow: 1 }}>
+    <Button
+      onClick={() => setAvailabilityFilter('all')}
+      sx={{
+        bgcolor: availabilityFilter === 'all' ? primaryColor : 'white',
+        color: availabilityFilter === 'all' ? 'white' : primaryColor,
+        borderColor: primaryColor,
+        '&:hover': {
+          bgcolor: availabilityFilter === 'all' ? primaryColor : '#e3f2fd',
+          borderColor: primaryColor
+        }
+      }}
+    >
+      All
+    </Button>
+    <Button
+      onClick={() => setAvailabilityFilter('rent')}
+      sx={{
+        bgcolor: availabilityFilter === 'rent' ? primaryColor : 'white',
+        color: availabilityFilter === 'rent' ? 'white' : primaryColor,
+        borderColor: primaryColor,
+        '&:hover': {
+          bgcolor: availabilityFilter === 'rent' ? primaryColor : '#e3f2fd',
+          borderColor: primaryColor
+        }
+      }}
+    >
+      For Rent
+    </Button>
+    <Button
+      onClick={() => setAvailabilityFilter('sale')}
+      sx={{
+        bgcolor: availabilityFilter === 'sale' ? primaryColor : 'white',
+        color: availabilityFilter === 'sale' ? 'white' : primaryColor,
+        borderColor: primaryColor,
+        '&:hover': {
+          bgcolor: availabilityFilter === 'sale' ? primaryColor : '#e3f2fd',
+          borderColor: primaryColor
+        }
+      }}
+    >
+      For Sale
+    </Button>
+  </ButtonGroup>
+</Box>
 
         {/* Error Message */}
         {error && (
@@ -203,134 +264,145 @@ export default function AllProperties() {
             {filteredProperties.map((property) => (
               <Grid item xs={12} sm={6} md={4} key={property._id}>
                 <Card
-                  sx={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-8px)',
-                      boxShadow: 6
-                    }
-                  }}
-                  onClick={() => handleCardClick(property._id)}
-                >
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={property.imgUrl || 'https://via.placeholder.com/400x200?text=No+Image'}
-                    alt={property.title}
-                    sx={{ objectFit: 'cover' }}
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    {/* Property Type Badge */}
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Chip
-                        icon={getPropertyIcon(property.propertyType)}
-                        label={property.propertyType}
-                        size="small"
-                        sx={{
-                          bgcolor: primaryColor,
-                          color: 'white',
-                          fontWeight: 'bold'
-                        }}
-                      />
-                      <Chip
-                        label={property.status || 'Available'}
-                        size="small"
-                        color={property.status === 'Available' ? 'success' : 'default'}
-                      />
-                    </Box>
+  sx={{
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      transform: 'translateY(-8px)',
+      boxShadow: 6
+    }
+  }}
+  onClick={() => handleCardClick(property._id)}
+>
+  <CardMedia
+  component="img"
+  sx={{ 
+    height: 240,  // Fixed height
+    width: '100%',
+    objectFit: 'cover',
+    objectPosition: 'center'
+  }}
+  image={property.imgUrl || 'https://via.placeholder.com/400x240?text=No+Image'}
+  alt={property.title}
+/>
+  <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+    {/* Property Type Badge */}
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+      <Chip
+        icon={getPropertyIcon(property.propertyType)}
+        label={property.propertyType}
+        size="small"
+        sx={{
+          bgcolor: primaryColor,
+          color: 'white',
+          fontWeight: 'bold'
+        }}
+      />
+      <Chip
+        label={property.status || 'Available'}
+        size="small"
+        color={property.status === 'Available' ? 'success' : 'default'}
+      />
+    </Box>
 
-                    {/* Title */}
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 'bold',
-                        color: primaryColor,
-                        mb: 1,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      {property.title}
-                    </Typography>
+    {/* Title */}
+    <Typography
+      variant="h6"
+      sx={{
+        fontWeight: 'bold',
+        color: primaryColor,
+        mb: 1,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        display: '-webkit-box',
+        WebkitLineClamp: 2,  // Changed from whiteSpace: 'nowrap' to allow 2 lines
+        WebkitBoxOrient: 'vertical',
+        minHeight: '64px'  // Added to maintain consistent title height
+      }}
+    >
+      {property.title}
+    </Typography>
 
-                    {/* Description */}
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{
-                        mb: 2,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical'
-                      }}
-                    >
-                      {property.description}
-                    </Typography>
+    {/* Description */}
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      sx={{
+        mb: 2,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        display: '-webkit-box',
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: 'vertical',
+        minHeight: '40px'  // Added to maintain consistent description height
+      }}
+    >
+      {property.description}
+    </Typography>
 
-                    {/* Location */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <LocationOnIcon sx={{ fontSize: 18, color: primaryColor, mr: 0.5 }} />
-                      <Typography variant="body2" color="text.secondary">
-                        {property.city}, {property.location}
-                      </Typography>
-                    </Box>
+    {/* Location */}
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+      <LocationOnIcon sx={{ fontSize: 18, color: primaryColor, mr: 0.5 }} />
+      <Typography variant="body2" color="text.secondary" noWrap>
+        {property.city}, {property.location}
+      </Typography>
+    </Box>
 
-                    {/* Area */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <SquareFootIcon sx={{ fontSize: 18, color: primaryColor, mr: 0.5 }} />
-                      <Typography variant="body2" color="text.secondary">
-                        {property.sqrft || property.area} sq.ft
-                      </Typography>
-                    </Box>
+    {/* Area */}
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+      <SquareFootIcon sx={{ fontSize: 18, color: primaryColor, mr: 0.5 }} />
+      <Typography variant="body2" color="text.secondary">
+        {property.sqrft || property.area} sq.ft
+      </Typography>
+    </Box>
 
-                    {/* Price */}
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        mt: 2,
-                        pt: 2,
-                        borderTop: '1px solid #e0e0e0'
-                      }}
-                    >
-                      <CurrencyRupeeIcon sx={{ fontSize: 20, color: primaryColor }} />
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: 'bold',
-                          color: primaryColor
-                        }}
-                      >
-                        {formatPrice(property.price)}
-                      </Typography>
-                    </Box>
+    {/* Spacer to push price and tags to bottom */}
+    <Box sx={{ flexGrow: 1 }} />
 
-                    {/* Availability Tags */}
-                    <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-                      {property.isAvailableForSale && (
-                        <Chip
-                          label="For Sale"
-                          size="small"
-                          sx={{ bgcolor: '#e3f2fd', color: primaryColor }}
-                        />
-                      )}
-                      {(property.isAvailableForRent || property.availableForRent) && (
-                        <Chip
-                          label="For Rent"
-                          size="small"
-                          sx={{ bgcolor: '#fff3e0', color: '#f57c00' }}
-                        />
-                      )}
-                    </Box>
-                  </CardContent>
-                </Card>
+    {/* Price */}
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        mt: 2,
+        pt: 2,
+        borderTop: '1px solid #e0e0e0'
+      }}
+    >
+      <CurrencyRupeeIcon sx={{ fontSize: 20, color: primaryColor }} />
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 'bold',
+          color: primaryColor
+        }}
+      >
+        {formatPrice(property.price)}
+      </Typography>
+    </Box>
+
+    {/* Availability Tags */}
+    <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap' }}>
+      {property.isAvailableForSale && (
+        <Chip
+          label="For Sale"
+          size="small"
+          sx={{ bgcolor: '#e3f2fd', color: primaryColor }}
+        />
+      )}
+      {(property.isAvailableForRent || property.availableForRent) && (
+        <Chip
+          label="For Rent"
+          size="small"
+          sx={{ bgcolor: '#fff3e0', color: '#f57c00' }}
+        />
+      )}
+    </Box>
+  </CardContent>
+</Card>
               </Grid>
             ))}
           </Grid>
